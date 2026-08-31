@@ -1,0 +1,47 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="flex items-center justify-between mb-8">
+    <h1 class="text-3xl font-bold">Schedule</h1>
+    <a routerLink="/workouts/new" class="btn-primary text-sm">+ New Workout</a>
+  </div>
+
+  <!-- Week navigation -->
+  <div class="flex items-center justify-between mb-6">
+    <button (click)="previousWeek()" class="btn-secondary text-sm py-2 px-4">&larr; Prev</button>
+    <span class="text-lg font-medium">
+      {{ formatDate(weekDates()[0]) }} - {{ formatDate(weekDates()[6]) }}
+    </span>
+    <button (click)="nextWeek()" class="btn-secondary text-sm py-2 px-4">Next &rarr;</button>
+  </div>
+
+  <!-- Week grid -->
+  <div class="grid grid-cols-1 md:grid-cols-7 gap-3">
+    @for (date of weekDates(); track $index) {
+      <div class="gym-card min-h-[150px]"
+           [class.border-2]="isToday(date)"
+           [class.border-primary]="isToday(date)">
+        <div class="text-center mb-3">
+          <p class="text-xs text-text-muted">{{ weekDays[$index] }}</p>
+          <p class="text-lg font-bold" [class.text-primary]="isToday(date)">
+            {{ date.getDate() }}
+          </p>
+        </div>
+
+        @for (workout of getWorkoutsForDate(date); track workout.id) {
+          <a [routerLink]="['/workouts', workout.id]"
+             class="block p-2 mb-1 rounded text-xs bg-primary/20 text-primary hover:bg-primary/30 transition-colors truncate">
+            {{ workout.name }}
+          </a>
+        }
+
+        @if (getWorkoutsForDate(date).length === 0) {
+          <p class="text-center text-text-muted text-xs mt-4">Rest day</p>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="mt-8 gym-card text-center">
+    <p class="text-text-muted">Schedule workouts by setting a date when creating or editing a workout.</p>
+    <a routerLink="/workouts" class="text-primary hover:underline text-sm mt-2 inline-block">View all workouts</a>
+  </div>
+</div>

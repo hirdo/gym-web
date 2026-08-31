@@ -1,0 +1,102 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- Welcome -->
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold">
+      Welcome back, <span class="text-primary">{{ auth.getUserName() }}</span>
+    </h1>
+    <p class="text-text-muted mt-1">Here's your fitness overview</p>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="gym-card">
+      <p class="text-text-muted text-sm">Total Workouts</p>
+      <p class="text-3xl font-bold text-primary mt-1">{{ workoutService.totalWorkouts() }}</p>
+    </div>
+    <div class="gym-card">
+      <p class="text-text-muted text-sm">Completed</p>
+      <p class="text-3xl font-bold text-success mt-1">{{ workoutService.completedWorkouts() }}</p>
+    </div>
+    <div class="gym-card">
+      <p class="text-text-muted text-sm">This Week</p>
+      <p class="text-3xl font-bold text-accent mt-1">0</p>
+    </div>
+    <div class="gym-card">
+      <p class="text-text-muted text-sm">Streak</p>
+      <p class="text-3xl font-bold text-warning mt-1">0 days</p>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+    <a routerLink="/workouts/new" class="gym-card flex items-center gap-4 hover:border-primary hover:border transition-all cursor-pointer">
+      <div class="w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center shrink-0">
+        <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+      </div>
+      <div>
+        <h3 class="font-semibold">New Workout</h3>
+        <p class="text-text-muted text-sm">Create a new workout plan</p>
+      </div>
+    </a>
+
+    <a routerLink="/workouts" class="gym-card flex items-center gap-4 hover:border-accent hover:border transition-all cursor-pointer">
+      <div class="w-12 h-12 bg-accent/20 rounded-xl flex items-center justify-center shrink-0">
+        <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+        </svg>
+      </div>
+      <div>
+        <h3 class="font-semibold">My Workouts</h3>
+        <p class="text-text-muted text-sm">View all your workout plans</p>
+      </div>
+    </a>
+
+    <a routerLink="/schedule" class="gym-card flex items-center gap-4 hover:border-success hover:border transition-all cursor-pointer">
+      <div class="w-12 h-12 bg-success/20 rounded-xl flex items-center justify-center shrink-0">
+        <svg class="w-6 h-6 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+      </div>
+      <div>
+        <h3 class="font-semibold">Schedule</h3>
+        <p class="text-text-muted text-sm">Plan your training week</p>
+      </div>
+    </a>
+  </div>
+
+  <!-- Recent Workouts -->
+  <div class="gym-card">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-xl font-semibold">Recent Workouts</h2>
+      <a routerLink="/workouts" class="text-primary text-sm hover:underline">View all</a>
+    </div>
+
+    @if (workoutService.recentWorkouts().length === 0) {
+      <div class="text-center py-8 text-text-muted">
+        <p>No workouts yet. Start your journey!</p>
+        <a routerLink="/workouts/new" class="btn-primary mt-4 inline-block">Create Your First Workout</a>
+      </div>
+    } @else {
+      <div class="space-y-3">
+        @for (workout of workoutService.recentWorkouts(); track workout.id) {
+          <a [routerLink]="['/workouts', workout.id]"
+             class="flex items-center justify-between p-4 bg-surface-light rounded-lg hover:bg-secondary-light transition-colors">
+            <div>
+              <h3 class="font-medium">{{ workout.name }}</h3>
+              <p class="text-text-muted text-sm">{{ workout.exercises.length }} exercises &middot; {{ workout.category }}</p>
+            </div>
+            <div class="text-right">
+              @if (workout.completedDate) {
+                <span class="text-success text-sm font-medium">Completed</span>
+              } @else {
+                <span class="text-accent text-sm font-medium">Pending</span>
+              }
+            </div>
+          </a>
+        }
+      </div>
+    }
+  </div>
+</div>

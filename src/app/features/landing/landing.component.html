@@ -1,0 +1,162 @@
+<!-- Hero Section -->
+<section class="gym-gradient min-h-[80vh] flex items-center">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+    <div class="max-w-3xl">
+      <h1 class="text-5xl sm:text-6xl font-extrabold leading-tight">
+        Transform Your
+        <span class="text-accent">Fitness Journey</span>
+      </h1>
+      <p class="mt-6 text-xl text-text-muted leading-relaxed">
+        Track your workouts, monitor progress, and achieve your goals with GymTrack.
+        Your personal fitness companion — anytime, anywhere.
+      </p>
+      <div class="mt-10 flex flex-wrap gap-4">
+        @if (auth.isAuthenticated()) {
+          <a routerLink="/dashboard" class="btn-accent text-lg py-3 px-8">Go to Dashboard</a>
+        } @else {
+          <button (click)="auth.login()" class="btn-accent text-lg py-3 px-8">Get Started</button>
+          <button (click)="auth.login()" class="btn-secondary text-lg py-3 px-8">Sign In</button>
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-20 bg-background">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl sm:text-4xl font-bold">Everything You Need to <span class="text-primary">Succeed</span></h2>
+      <p class="mt-4 text-text-muted text-lg max-w-2xl mx-auto">
+        A complete suite of tools designed to help you reach your fitness goals faster.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Feature 1 -->
+      <div class="gym-card text-center hover:scale-105 transition-transform">
+        <div class="w-14 h-14 mx-auto mb-4 bg-primary/20 rounded-xl flex items-center justify-center">
+          <svg class="w-7 h-7 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold mb-2">Workout Tracking</h3>
+        <p class="text-text-muted">Log exercises, sets, reps, and weights. Keep a detailed record of every session.</p>
+      </div>
+
+      <!-- Feature 2 -->
+      <div class="gym-card text-center hover:scale-105 transition-transform">
+        <div class="w-14 h-14 mx-auto mb-4 bg-accent/20 rounded-xl flex items-center justify-center">
+          <svg class="w-7 h-7 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold mb-2">Smart Scheduling</h3>
+        <p class="text-text-muted">Plan your training week with an intuitive calendar. Never miss a workout again.</p>
+      </div>
+
+      <!-- Feature 3 -->
+      <div class="gym-card text-center hover:scale-105 transition-transform">
+        <div class="w-14 h-14 mx-auto mb-4 bg-success/20 rounded-xl flex items-center justify-center">
+          <svg class="w-7 h-7 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold mb-2">Progress Tracking</h3>
+        <p class="text-text-muted">Visualize your improvements over time. Stay motivated with clear progress indicators.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Membership Preview -->
+<section class="py-20 bg-secondary">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl sm:text-4xl font-bold">Choose Your <span class="text-accent">Plan</span></h2>
+      <p class="mt-4 text-text-muted text-lg">Start free and upgrade as you grow.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+      <!-- Basic -->
+      <div class="gym-card border border-surface-light">
+        <h3 class="text-lg font-semibold text-text-muted">Basic</h3>
+        <div class="mt-4 mb-6">
+          <span class="text-4xl font-bold">Free</span>
+        </div>
+        <ul class="space-y-3 text-sm text-text-muted mb-8">
+          <li class="flex items-center gap-2">
+            <span class="text-success">&#10003;</span> Workout tracking
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="text-success">&#10003;</span> 5 workout plans
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="text-success">&#10003;</span> Basic schedule
+          </li>
+        </ul>
+        <button (click)="auth.login()" class="btn-secondary w-full">Get Started</button>
+      </div>
+
+      <!-- Premium -->
+      <div class="gym-card border-2 border-primary relative">
+        <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">POPULAR</span>
+        <h3 class="text-lg font-semibold text-primary">Premium</h3>
+        <div class="mt-4 mb-6">
+          <span class="text-4xl font-bold">$9.99</span>
+          <span class="text-text-muted text-sm">/month</span>
+        </div>
+        <ul class="space-y-3 text-sm text-text-muted mb-8">
+          <li class="flex items-center gap-2">
+            <span class="text-success">&#10003;</span> Unlimited workout plans
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="text-success">&#10003;</span> Advanced analytics
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="text-success">&#10003;</span> Priority support
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="text-success">&#10003;</span> Custom schedules
+          </li>
+        </ul>
+        <button (click)="auth.login()" class="btn-primary w-full">Subscribe</button>
+      </div>
+
+      <!-- Elite -->
+      <div class="gym-card border border-accent">
+        <h3 class="text-lg font-semibold text-accent">Elite</h3>
+        <div class="mt-4 mb-6">
+          <span class="text-4xl font-bold">$19.99</span>
+          <span class="text-text-muted text-sm">/month</span>
+        </div>
+        <ul class="space-y-3 text-sm text-text-muted mb-8">
+          <li class="flex items-center gap-2">
+            <span class="text-success">&#10003;</span> Everything in Premium
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="text-success">&#10003;</span> Personal trainer AI
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="text-success">&#10003;</span> Nutrition planning
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="text-success">&#10003;</span> 1-on-1 coaching
+          </li>
+        </ul>
+        <button (click)="auth.login()" class="btn-accent w-full">Go Elite</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-20 bg-background">
+  <div class="max-w-4xl mx-auto px-4 text-center">
+    <h2 class="text-3xl sm:text-4xl font-bold mb-4">Ready to Start Your Journey?</h2>
+    <p class="text-text-muted text-lg mb-8">Join thousands of members who have transformed their fitness with GymTrack.</p>
+    @if (!auth.isAuthenticated()) {
+      <button (click)="auth.login()" class="btn-accent text-lg py-3 px-10">Join GymTrack Now</button>
+    }
+  </div>
+</section>
