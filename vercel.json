@@ -1,0 +1,27 @@
+{
+  "buildCommand": "npm run build:vercel",
+  "outputDirectory": "dist/gym-web/browser",
+  "framework": null,
+  "rewrites": [
+    {
+      "source": "/((?!assets|silent-check-sso\\.html).*)",
+      "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/silent-check-sso.html",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, no-store" }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+@use "tailwindcss";
+
+@theme {
+  --color-primary: #e53e3e;
+  --color-primary-light: #fc8181;
+  --color-primary-dark: #c53030;
+
+  --color-secondary: #2d3748;
+  --color-secondary-light: #4a5568;
+  --color-secondary-dark: #1a202c;
+
+  --color-accent: #ecc94b;
+  --color-accent-dark: #d69e2e;
+
+  --color-background: #1a202c;
+  --color-surface: #2d3748;
+  --color-surface-light: #4a5568;
+
+  --color-text: #f7fafc;
+  --color-text-muted: #a0aec0;
+
+  --color-success: #48bb78;
+  --color-warning: #ed8936;
+  --color-error: #fc8181;
+
+  --font-heading: 'Inter', 'Helvetica Neue', sans-serif;
+  --font-body: 'Inter', 'Helvetica Neue', sans-serif;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.gym-gradient {
+  background: linear-gradient(135deg, var(--color-primary-dark), var(--color-secondary));
+}
+
+.gym-card {
+  background-color: var(--color-surface);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3);
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--color-primary);
+  color: white;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: var(--color-primary-dark);
+  }
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--color-surface-light);
+  color: var(--color-text);
+  font-weight: 600;
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-surface-light);
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: var(--color-secondary);
+  }
+}
+
+.btn-accent {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--color-accent);
+  color: var(--color-secondary-dark);
+  font-weight: 700;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: var(--color-accent-dark);
+  }
+}

@@ -1,0 +1,37 @@
+<footer class="bg-secondary-dark border-t border-surface-light">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Brand -->
+      <div>
+        <a routerLink="/" class="text-xl font-bold">
+          <span class="text-text">Gym</span><span class="text-primary">Track</span>
+        </a>
+        <p class="mt-2 text-text-muted text-sm">Your personal fitness companion. Track workouts, set goals, and achieve results.</p>
+      </div>
+
+      <!-- Quick links -->
+      <div>
+        <h3 class="text-text font-semibold mb-3">Quick Links</h3>
+        <ul class="space-y-2 text-sm">
+          <li><a routerLink="/" class="text-text-muted hover:text-text transition-colors">Home</a></li>
+          <li><a routerLink="/workouts" class="text-text-muted hover:text-text transition-colors">Workouts</a></li>
+          <li><a routerLink="/schedule" class="text-text-muted hover:text-text transition-colors">Schedule</a></li>
+          <li><a routerLink="/membership" class="text-text-muted hover:text-text transition-colors">Membership</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact -->
+      <div>
+        <h3 class="text-text font-semibold mb-3">Contact</h3>
+        <ul class="space-y-2 text-sm text-text-muted">
+          <li>support&#64;gymtrack.app</li>
+          <li>Ho Chi Minh City, Vietnam</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-8 pt-6 border-t border-surface-light text-center text-text-muted text-sm">
+      &copy; {{ currentYear }} GymTrack. All rights reserved.
+    </div>
+  </div>
+</footer>
