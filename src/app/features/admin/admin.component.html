@@ -1,0 +1,194 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+    <div>
+      <h1 class="text-3xl sm:text-4xl font-bold font-heading tracking-wide uppercase">Admin Panel</h1>
+      <p class="text-text-muted mt-1">Manage users and monitor platform activity</p>
+    </div>
+    <span class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/15 border border-primary/30 text-primary font-heading font-semibold text-sm uppercase tracking-wider">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+      Admin Access
+    </span>
+  </div>
+
+  <!-- Stats Overview -->
+  <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+    <div class="gym-card text-center">
+      <p class="text-text-muted text-xs font-semibold uppercase tracking-wider">Total Users</p>
+      <p class="text-3xl font-bold text-primary mt-2 font-heading">{{ users().length }}</p>
+    </div>
+    <div class="gym-card text-center">
+      <p class="text-text-muted text-xs font-semibold uppercase tracking-wider">Admins</p>
+      <p class="text-3xl font-bold text-warning mt-2 font-heading">{{ adminCount }}</p>
+    </div>
+    <div class="gym-card text-center">
+      <p class="text-text-muted text-xs font-semibold uppercase tracking-wider">Users</p>
+      <p class="text-3xl font-bold text-accent mt-2 font-heading">{{ activeUsers - adminCount }}</p>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="flex gap-1 mb-6 border-b border-border">
+    <button (click)="activeTab.set('users')"
+            class="px-5 py-3 font-heading font-semibold text-sm uppercase tracking-wider transition-colors cursor-pointer"
+            [class]="activeTab() === 'users'
+              ? 'text-primary border-b-2 border-primary -mb-px'
+              : 'text-text-muted hover:text-text'">
+      User Management
+    </button>
+    <button (click)="activeTab.set('stats')"
+            class="px-5 py-3 font-heading font-semibold text-sm uppercase tracking-wider transition-colors cursor-pointer"
+            [class]="activeTab() === 'stats'
+              ? 'text-primary border-b-2 border-primary -mb-px'
+              : 'text-text-muted hover:text-text'">
+      Platform Stats
+    </button>
+  </div>
+
+  <!-- Users Tab -->
+  @if (activeTab() === 'users') {
+    @if (loading()) {
+      <div class="gym-card text-center py-12">
+        <div class="w-10 h-10 border-4 border-surface-light border-t-primary rounded-full animate-spin mx-auto mb-4"></div>
+        <p class="text-text-muted">Loading users from database...</p>
+      </div>
+    } @else if (users().length === 0) {
+      <div class="gym-card text-center py-12">
+        <svg class="w-12 h-12 text-text-muted mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        <p class="text-text-muted text-lg font-heading mb-2">No users found</p>
+        <p class="text-text-muted text-sm">Users will appear here after they log in for the first time.</p>
+      </div>
+    } @else {
+      <div class="gym-card overflow-hidden !p-0">
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-[800px]">
+            <thead>
+              <tr class="border-b border-border">
+                <th class="text-left px-5 py-4 text-xs font-semibold text-text-muted uppercase tracking-wider">User</th>
+                <th class="text-left px-5 py-4 text-xs font-semibold text-text-muted uppercase tracking-wider">Role</th>
+                <th class="text-left px-5 py-4 text-xs font-semibold text-text-muted uppercase tracking-wider">Membership</th>
+                <th class="text-left px-5 py-4 text-xs font-semibold text-text-muted uppercase tracking-wider">Workouts</th>
+                <th class="text-left px-5 py-4 text-xs font-semibold text-text-muted uppercase tracking-wider">Last Login</th>
+                <th class="text-right px-5 py-4 text-xs font-semibold text-text-muted uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (user of users(); track user.id) {
+                <tr class="border-b border-border/50 hover:bg-surface-light/50 transition-colors">
+                  <td class="px-5 py-4">
+                    <div class="flex items-center gap-3">
+                      <div class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm shrink-0"
+                           [class]="user.role === 'admin' ? 'bg-primary/20 text-primary' : 'bg-accent/15 text-accent'">
+                        {{ user.firstName ? user.firstName[0] : user.username[0] || '?' }}
+                      </div>
+                      <div>
+                        <p class="font-semibold text-sm">{{ user.firstName || user.username }} {{ user.lastName }}</p>
+                        <p class="text-text-muted text-xs">{{ user.email }}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-5 py-4">
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold uppercase tracking-wider"
+                          [class]="user.role === 'admin' ? 'bg-primary/15 text-primary' : 'bg-surface-light text-text-muted'">
+                      {{ user.role }}
+                    </span>
+                  </td>
+                  <td class="px-5 py-4">
+                    <div class="flex items-center gap-2">
+                      <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold uppercase tracking-wider"
+                            [class]="user.membership === 'elite' ? 'bg-warning/15 text-warning' :
+                                     user.membership === 'premium' ? 'bg-primary/15 text-primary' :
+                                     'bg-surface-light text-text-muted'">
+                        {{ user.membership }}
+                      </span>
+                      <select (change)="changeMembership(user.id, $any($event.target).value)"
+                              class="bg-background border border-border rounded-md text-xs px-2 py-1 text-text-muted cursor-pointer focus:border-primary focus:outline-none"
+                              [attr.aria-label]="'Change membership for ' + user.firstName">
+                        <option value="" disabled selected>Change</option>
+                        @if (user.membership !== 'basic') {
+                          <option value="basic">Basic</option>
+                        }
+                        @if (user.membership !== 'premium') {
+                          <option value="premium">Premium</option>
+                        }
+                        @if (user.membership !== 'elite') {
+                          <option value="elite">Elite</option>
+                        }
+                      </select>
+                    </div>
+                  </td>
+                  <td class="px-5 py-4">
+                    <span class="text-sm font-heading font-semibold" [class]="user.workoutCount > 0 ? 'text-accent' : 'text-text-muted'">
+                      {{ user.workoutCount }}
+                    </span>
+                  </td>
+                  <td class="px-5 py-4 text-sm text-text-muted">{{ formatDateTime(user.lastLogin) }}</td>
+                  <td class="px-5 py-4">
+                    <div class="flex items-center justify-end gap-2">
+                      <button (click)="toggleUserRole(user.id)"
+                              class="px-3 py-1.5 text-xs font-semibold rounded-md border border-border hover:border-primary hover:text-primary transition-colors cursor-pointer uppercase tracking-wider"
+                              [attr.aria-label]="'Toggle role for ' + user.firstName">
+                        {{ user.role === 'admin' ? 'Demote' : 'Promote' }}
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+  }
+
+  <!-- Stats Tab -->
+  @if (activeTab() === 'stats') {
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="gym-card">
+        <h3 class="font-heading font-semibold text-lg uppercase tracking-wider mb-4">User Growth</h3>
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-text-muted text-sm">Total registered</span>
+            <span class="font-bold text-accent font-heading text-lg">{{ users().length }}</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-text-muted text-sm">Admin users</span>
+            <span class="font-bold text-primary font-heading text-lg">{{ adminCount }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="gym-card">
+        <h3 class="font-heading font-semibold text-lg uppercase tracking-wider mb-4">Membership Breakdown</h3>
+        <div class="space-y-3">
+          <div>
+            <div class="flex items-center justify-between text-sm mb-1">
+              <span class="text-text-muted">Basic</span>
+              <span class="font-semibold">{{ basicCount }}</span>
+            </div>
+            <div class="w-full h-2 bg-background rounded-full overflow-hidden">
+              <div class="h-full bg-surface-light rounded-full" [style.width.%]="membershipPercent('basic')"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center justify-between text-sm mb-1">
+              <span class="text-text-muted">Premium</span>
+              <span class="font-semibold text-primary">{{ premiumCount }}</span>
+            </div>
+            <div class="w-full h-2 bg-background rounded-full overflow-hidden">
+              <div class="h-full bg-primary rounded-full" [style.width.%]="membershipPercent('premium')"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center justify-between text-sm mb-1">
+              <span class="text-text-muted">Elite</span>
+              <span class="font-semibold text-warning">{{ eliteCount }}</span>
+            </div>
+            <div class="w-full h-2 bg-background rounded-full overflow-hidden">
+              <div class="h-full bg-warning rounded-full" [style.width.%]="membershipPercent('elite')"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

@@ -1,10 +1,16 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { inject, Injectable, signal, computed, effect, OnDestroy } from '@angular/core';
 import { Workout } from '../models/workout.model';
+import { AuthService } from './auth.service';
+import { FirestoreService } from './firestore.service';
+import { where, Unsubscribe } from 'firebase/firestore';
 
 @Injectable({ providedIn: 'root' })
-export class WorkoutService {
-  private readonly STORAGE_KEY = 'gymtrack-workouts';
-  private readonly workoutsSignal = signal<Workout[]>(this.loadFromStorage());
+export class WorkoutService implements OnDestroy {
+  private readonly auth = inject(AuthService);
+  private readonly firestore = inject(FirestoreService);
+  private readonly COLLECTION = 'workouts';
+  private readonly workoutsSignal = signal<Workout[]>([]);
+  private unsubscribe: Unsubscribe | null = null;
 
   readonly workouts = this.workoutsSignal.asReadonly();
 
@@ -20,6 +26,22 @@ export class WorkoutService {
     this.workoutsSignal().filter(w => w.completedDate).length
   );
 
+  constructor() {
+    effect(() => {
+      const userId = this.auth.userId();
+      this.cleanupSubscription();
+      if (userId) {
+        this.subscribeToWorkouts(userId);
+      } else {
+        this.workoutsSignal.set([]);
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.cleanupSubscription();
+  }
+
   getById(id: string): Workout | undefined {
     return this.workoutsSignal().find((w) => w.id === id);
   }
@@ -28,56 +50,61 @@ export class WorkoutService {
     return this.workoutsSignal().filter((w) => w.category === category);
   }
 
-  add(workout: Omit<Workout, 'id' | 'createdAt' | 'updatedAt'>): Workout {
+  async add(workout: Omit<Workout, 'id' | 'userId' | 'createdAt' | 'updatedAt'>): Promise<Workout> {
+    const userId = this.auth.userId();
     const now = new Date().toISOString();
-    const newWorkout: Workout = {
+    const data = {
       ...workout,
-      id: crypto.randomUUID(),
+      userId: userId || '',
       createdAt: now,
       updatedAt: now
     };
-    this.workoutsSignal.update((list) => [...list, newWorkout]);
-    this.saveToStorage();
+    const id = await this.firestore.addDocument(this.COLLECTION, data);
+    const newWorkout: Workout = { ...data, id };
     return newWorkout;
   }
 
-  update(id: string, changes: Partial<Workout>): void {
-    this.workoutsSignal.update((list) =>
-      list.map((w) =>
-        w.id === id
-          ? { ...w, ...changes, updatedAt: new Date().toISOString() }
-          : w
-      )
-    );
-    this.saveToStorage();
+  async update(id: string, changes: Partial<Workout>): Promise<void> {
+    await this.firestore.updateDocument(this.COLLECTION, id, {
+      ...changes,
+      updatedAt: new Date().toISOString()
+    });
   }
 
-  delete(id: string): void {
-    this.workoutsSignal.update((list) => list.filter((w) => w.id !== id));
-    this.saveToStorage();
+  async delete(id: string): Promise<void> {
+    await this.firestore.deleteDocument(this.COLLECTION, id);
   }
 
-  markComplete(id: string): void {
-    this.update(id, { completedDate: new Date().toISOString() });
+  async markComplete(id: string): Promise<void> {
+    await this.update(id, { completedDate: new Date().toISOString() });
   }
 
-  private loadFromStorage(): Workout[] {
-    try {
-      const data = localStorage.getItem(this.STORAGE_KEY);
-      return data ? JSON.parse(data) : [];
-    } catch {
-      return [];
+  async getAllWorkoutsForAdmin(): Promise<{ userId: string; workouts: Workout[] }[]> {
+    const all = await this.firestore.queryDocuments<Workout>(this.COLLECTION);
+    const grouped = new Map<string, Workout[]>();
+    for (const w of all) {
+      const uid = w.userId || 'unknown';
+      if (!grouped.has(uid)) grouped.set(uid, []);
+      grouped.get(uid)!.push(w);
     }
+    return Array.from(grouped, ([userId, workouts]) => ({ userId, workouts }));
   }
 
-  private saveToStorage(): void {
-    try {
-      localStorage.setItem(
-        this.STORAGE_KEY,
-        JSON.stringify(this.workoutsSignal())
-      );
-    } catch {
-      // Storage might be full or unavailable
+  private subscribeToWorkouts(userId: string): void {
+    this.unsubscribe = this.firestore.subscribe<Workout>(
+      this.COLLECTION,
+      (workouts) => {
+        workouts.sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''));
+        this.workoutsSignal.set(workouts);
+      },
+      where('userId', '==', userId)
+    );
+  }
+
+  private cleanupSubscription(): void {
+    if (this.unsubscribe) {
+      this.unsubscribe();
+      this.unsubscribe = null;
     }
   }
 }

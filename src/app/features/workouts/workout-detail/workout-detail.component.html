@@ -1,78 +1,100 @@
-<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
   @if (workout(); as w) {
     <!-- Header -->
-    <div class="flex items-start justify-between mb-8">
-      <div>
-        <a routerLink="/workouts" class="text-text-muted hover:text-text text-sm mb-2 inline-block">&larr; Back to Workouts</a>
-        <h1 class="text-3xl font-bold">{{ w.name }}</h1>
-        <div class="flex items-center gap-3 mt-2">
-          <span class="inline-block px-3 py-1 text-xs font-medium rounded-full"
-                [class]="w.category === 'strength' ? 'bg-primary/20 text-primary' :
-                         w.category === 'cardio' ? 'bg-success/20 text-success' :
-                         w.category === 'hiit' ? 'bg-warning/20 text-warning' :
-                         w.category === 'flexibility' ? 'bg-accent/20 text-accent' :
-                         'bg-surface-light text-text-muted'">
-            {{ w.category }}
-          </span>
-          @if (w.completedDate) {
-            <span class="text-success text-sm font-medium">Completed</span>
-          }
+    <div class="mb-8">
+      <a routerLink="/workouts" class="text-text-muted hover:text-primary text-sm inline-flex items-center gap-1 transition-colors mb-4">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        Back to Workouts
+      </a>
+      <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+        <div>
+          <h1 class="text-3xl sm:text-4xl font-heading font-bold uppercase tracking-wide">{{ w.name }}</h1>
+          <div class="flex items-center gap-3 mt-3">
+            <span class="inline-flex items-center px-3 py-1 text-xs font-semibold rounded-md uppercase tracking-wider"
+                  [class]="w.category === 'strength' ? 'bg-primary/10 text-primary' :
+                           w.category === 'cardio' ? 'bg-accent/10 text-accent' :
+                           w.category === 'hiit' ? 'bg-warning/10 text-warning' :
+                           w.category === 'flexibility' ? 'bg-primary-light/10 text-primary-light' :
+                           'bg-surface-light text-text-muted'">
+              {{ w.category }}
+            </span>
+            @if (w.completedDate) {
+              <span class="inline-flex items-center gap-1.5 text-accent text-sm font-semibold">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                Completed
+              </span>
+            }
+            @if (w.scheduledDate) {
+              <span class="text-text-muted text-sm">
+                <svg class="w-3.5 h-3.5 inline -mt-0.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                {{ w.scheduledDate }}
+              </span>
+            }
+          </div>
         </div>
-      </div>
-      <div class="flex gap-2">
-        @if (!w.completedDate) {
-          <button (click)="markComplete()" class="btn-primary text-sm py-2 px-4">Mark Complete</button>
-        }
-        <button (click)="deleteWorkout()" class="btn-secondary text-sm py-2 px-4 hover:text-error">Delete</button>
+        <div class="flex gap-2 shrink-0">
+          @if (!w.completedDate) {
+            <a [routerLink]="['/workouts', w.id, 'edit']" class="btn-secondary text-sm py-2 px-4">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+              Edit
+            </a>
+            <button (click)="markComplete()" class="btn-accent text-sm py-2 px-4">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              Complete
+            </button>
+          }
+          <button (click)="deleteWorkout()" class="btn-secondary text-sm py-2 px-4 hover:!text-error hover:!border-error/50">Delete</button>
+        </div>
       </div>
     </div>
 
     @if (w.description) {
-      <p class="text-text-muted mb-6">{{ w.description }}</p>
+      <p class="text-text-muted mb-8 leading-relaxed">{{ w.description }}</p>
     }
 
     <!-- Exercises -->
     <div class="space-y-4">
-      <h2 class="text-xl font-semibold">Exercises ({{ w.exercises.length }})</h2>
+      <h2 class="text-lg font-heading font-bold uppercase tracking-wider">Exercises <span class="text-text-muted font-body font-normal text-sm normal-case">({{ w.exercises.length }})</span></h2>
       @for (exercise of w.exercises; track exercise.id; let i = $index) {
         <div class="gym-card">
-          <div class="flex items-center justify-between">
-            <h3 class="font-semibold text-lg">
-              <span class="text-text-muted mr-2">{{ i + 1 }}.</span>
-              {{ exercise.name }}
-            </h3>
-          </div>
-          <div class="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div>
-              <p class="text-xs text-text-muted">Sets</p>
-              <p class="text-xl font-bold text-primary">{{ exercise.sets }}</p>
+          <h3 class="font-heading font-semibold text-lg uppercase tracking-wide mb-4">
+            <span class="text-primary mr-2">{{ i + 1 }}.</span>
+            {{ exercise.name }}
+          </h3>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div class="bg-background rounded-xl p-3 text-center">
+              <p class="text-[10px] text-text-muted font-semibold uppercase tracking-wider mb-1">Sets</p>
+              <p class="text-2xl font-heading font-extrabold text-primary">{{ exercise.sets }}</p>
             </div>
-            <div>
-              <p class="text-xs text-text-muted">Reps</p>
-              <p class="text-xl font-bold text-accent">{{ exercise.reps }}</p>
+            <div class="bg-background rounded-xl p-3 text-center">
+              <p class="text-[10px] text-text-muted font-semibold uppercase tracking-wider mb-1">Reps</p>
+              <p class="text-2xl font-heading font-extrabold text-accent">{{ exercise.reps }}</p>
             </div>
             @if (exercise.weight) {
-              <div>
-                <p class="text-xs text-text-muted">Weight</p>
-                <p class="text-xl font-bold">{{ exercise.weight }} kg</p>
+              <div class="bg-background rounded-xl p-3 text-center">
+                <p class="text-[10px] text-text-muted font-semibold uppercase tracking-wider mb-1">Weight</p>
+                <p class="text-2xl font-heading font-extrabold">{{ exercise.weight }}<span class="text-sm text-text-muted ml-0.5">kg</span></p>
               </div>
             }
             @if (exercise.duration) {
-              <div>
-                <p class="text-xs text-text-muted">Duration</p>
-                <p class="text-xl font-bold">{{ exercise.duration }}s</p>
+              <div class="bg-background rounded-xl p-3 text-center">
+                <p class="text-[10px] text-text-muted font-semibold uppercase tracking-wider mb-1">Duration</p>
+                <p class="text-2xl font-heading font-extrabold">{{ exercise.duration }}<span class="text-sm text-text-muted ml-0.5">s</span></p>
               </div>
             }
           </div>
           @if (exercise.notes) {
-            <p class="mt-3 text-sm text-text-muted italic">{{ exercise.notes }}</p>
+            <p class="mt-3 text-sm text-text-muted border-l-2 border-primary/30 pl-3">{{ exercise.notes }}</p>
           }
         </div>
       }
     </div>
   } @else {
-    <div class="text-center py-20">
-      <p class="text-text-muted text-lg mb-4">Workout not found</p>
+    <div class="text-center py-24">
+      <div class="w-16 h-16 bg-surface-light rounded-2xl flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      </div>
+      <p class="text-text-muted text-lg font-heading mb-6">Workout not found</p>
       <a routerLink="/workouts" class="btn-primary">Back to Workouts</a>
     </div>
   }

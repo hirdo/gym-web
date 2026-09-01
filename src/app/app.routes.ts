@@ -36,6 +36,13 @@ export const routes: Routes = [
           )
       },
       {
+        path: ':id/edit',
+        loadComponent: () =>
+          import('./features/workouts/workout-create/workout-create.component').then(
+            (m) => m.WorkoutCreateComponent
+          )
+      },
+      {
         path: ':id',
         loadComponent: () =>
           import('./features/workouts/workout-detail/workout-detail.component').then(
@@ -67,6 +74,15 @@ export const routes: Routes = [
         (m) => m.ProfileComponent
       ),
     canActivate: [canActivateAuth]
+  },
+  {
+    path: 'admin',
+    loadComponent: () =>
+      import('./features/admin/admin.component').then(
+        (m) => m.AdminComponent
+      ),
+    canActivate: [canActivateAuth],
+    data: { roles: ['admin'] }
   },
   {
     path: '**',
