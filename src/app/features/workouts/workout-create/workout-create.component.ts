@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import {
   FormBuilder,
   FormArray,
@@ -13,7 +13,7 @@ import { WorkoutCategory } from '../../../core/models/workout.model';
 @Component({
   selector: 'app-workout-create',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './workout-create.component.html',
   styleUrl: './workout-create.component.scss'
 })
@@ -34,6 +34,7 @@ export class WorkoutCreateComponent {
     name: ['', Validators.required],
     description: [''],
     category: ['strength' as WorkoutCategory, Validators.required],
+    scheduledDate: [''],
     exercises: this.fb.array([this.createExerciseGroup()])
   });
 
@@ -70,6 +71,7 @@ export class WorkoutCreateComponent {
       name: value.name!,
       description: value.description || undefined,
       category: value.category as WorkoutCategory,
+      scheduledDate: value.scheduledDate || undefined,
       exercises: value.exercises.map((e) => ({
         id: crypto.randomUUID(),
         name: e['name']!,

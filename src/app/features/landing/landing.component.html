@@ -1,147 +1,173 @@
 <!-- Hero Section -->
-<section class="gym-gradient min-h-[80vh] flex items-center">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+<section class="gym-gradient relative overflow-hidden">
+  <div class="absolute inset-0 opacity-10">
+    <div class="absolute top-20 right-10 w-72 h-72 bg-primary rounded-full blur-[128px]"></div>
+    <div class="absolute bottom-20 left-10 w-96 h-96 bg-primary-dark rounded-full blur-[128px]"></div>
+  </div>
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32 lg:py-40">
     <div class="max-w-3xl">
-      <h1 class="text-5xl sm:text-6xl font-extrabold leading-tight">
+      <p class="text-primary font-heading font-semibold text-sm uppercase tracking-[0.2em] mb-4">Your Personal Fitness Companion</p>
+      <h1 class="text-5xl sm:text-6xl lg:text-7xl font-heading font-extrabold leading-[0.95] tracking-wide uppercase">
         Transform Your
-        <span class="text-accent">Fitness Journey</span>
+        <span class="text-primary">Fitness</span>
+        Journey
       </h1>
-      <p class="mt-6 text-xl text-text-muted leading-relaxed">
-        Track your workouts, monitor progress, and achieve your goals with GymTrack.
-        Your personal fitness companion — anytime, anywhere.
+      <p class="mt-6 text-lg sm:text-xl text-text-muted leading-relaxed max-w-2xl">
+        Track your workouts, monitor progress, and crush your goals with GymTrack.
+        Built for athletes who demand results.
       </p>
       <div class="mt-10 flex flex-wrap gap-4">
         @if (auth.isAuthenticated()) {
-          <a routerLink="/dashboard" class="btn-accent text-lg py-3 px-8">Go to Dashboard</a>
+          <a routerLink="/dashboard" class="btn-primary text-lg py-4 px-10">Go to Dashboard</a>
         } @else {
-          <button (click)="auth.login()" class="btn-accent text-lg py-3 px-8">Get Started</button>
-          <button (click)="auth.login()" class="btn-secondary text-lg py-3 px-8">Sign In</button>
+          <button (click)="auth.login()" class="btn-primary text-lg py-4 px-10">Get Started Free</button>
+          <button (click)="auth.login()" class="btn-secondary text-lg py-4 px-8">Sign In</button>
         }
+      </div>
+      <div class="mt-8 flex items-center gap-6 text-sm text-text-muted">
+        <span class="flex items-center gap-2">
+          <svg class="w-4 h-4 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+          Free forever plan
+        </span>
+        <span class="flex items-center gap-2">
+          <svg class="w-4 h-4 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+          No credit card needed
+        </span>
       </div>
     </div>
   </div>
 </section>
 
 <!-- Features Section -->
-<section class="py-20 bg-background">
+<section class="py-20 sm:py-28 bg-background">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="text-center mb-16">
-      <h2 class="text-3xl sm:text-4xl font-bold">Everything You Need to <span class="text-primary">Succeed</span></h2>
+      <p class="text-primary font-heading font-semibold text-sm uppercase tracking-[0.2em] mb-3">Features</p>
+      <h2 class="text-3xl sm:text-4xl lg:text-5xl font-heading font-bold uppercase tracking-wide">Everything You Need to <span class="text-primary">Succeed</span></h2>
       <p class="mt-4 text-text-muted text-lg max-w-2xl mx-auto">
         A complete suite of tools designed to help you reach your fitness goals faster.
       </p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <!-- Feature 1 -->
-      <div class="gym-card text-center hover:scale-105 transition-transform">
-        <div class="w-14 h-14 mx-auto mb-4 bg-primary/20 rounded-xl flex items-center justify-center">
-          <svg class="w-7 h-7 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+      <div class="gym-card text-center group hover:border-primary/30 transition-all duration-300">
+        <div class="w-16 h-16 mx-auto mb-5 bg-primary/10 rounded-2xl flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+          <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
           </svg>
         </div>
-        <h3 class="text-xl font-semibold mb-2">Workout Tracking</h3>
-        <p class="text-text-muted">Log exercises, sets, reps, and weights. Keep a detailed record of every session.</p>
+        <h3 class="text-xl font-heading font-bold uppercase tracking-wider mb-2">Workout Tracking</h3>
+        <p class="text-text-muted leading-relaxed">Log exercises, sets, reps, and weights. Keep a detailed record of every session.</p>
       </div>
 
-      <!-- Feature 2 -->
-      <div class="gym-card text-center hover:scale-105 transition-transform">
-        <div class="w-14 h-14 mx-auto mb-4 bg-accent/20 rounded-xl flex items-center justify-center">
-          <svg class="w-7 h-7 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+      <div class="gym-card text-center group hover:border-accent/30 transition-all duration-300">
+        <div class="w-16 h-16 mx-auto mb-5 bg-accent/10 rounded-2xl flex items-center justify-center group-hover:bg-accent/20 transition-colors">
+          <svg class="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
         </div>
-        <h3 class="text-xl font-semibold mb-2">Smart Scheduling</h3>
-        <p class="text-text-muted">Plan your training week with an intuitive calendar. Never miss a workout again.</p>
+        <h3 class="text-xl font-heading font-bold uppercase tracking-wider mb-2">Smart Scheduling</h3>
+        <p class="text-text-muted leading-relaxed">Plan your training week with an intuitive calendar. Never miss a workout again.</p>
       </div>
 
-      <!-- Feature 3 -->
-      <div class="gym-card text-center hover:scale-105 transition-transform">
-        <div class="w-14 h-14 mx-auto mb-4 bg-success/20 rounded-xl flex items-center justify-center">
-          <svg class="w-7 h-7 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+      <div class="gym-card text-center group hover:border-warning/30 transition-all duration-300">
+        <div class="w-16 h-16 mx-auto mb-5 bg-warning/10 rounded-2xl flex items-center justify-center group-hover:bg-warning/20 transition-colors">
+          <svg class="w-8 h-8 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
           </svg>
         </div>
-        <h3 class="text-xl font-semibold mb-2">Progress Tracking</h3>
-        <p class="text-text-muted">Visualize your improvements over time. Stay motivated with clear progress indicators.</p>
+        <h3 class="text-xl font-heading font-bold uppercase tracking-wider mb-2">Progress Tracking</h3>
+        <p class="text-text-muted leading-relaxed">Visualize your improvements over time. Stay motivated with clear progress indicators.</p>
       </div>
     </div>
   </div>
 </section>
 
 <!-- Membership Preview -->
-<section class="py-20 bg-secondary">
+<section class="py-20 sm:py-28 bg-surface">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="text-center mb-16">
-      <h2 class="text-3xl sm:text-4xl font-bold">Choose Your <span class="text-accent">Plan</span></h2>
+      <p class="text-primary font-heading font-semibold text-sm uppercase tracking-[0.2em] mb-3">Pricing</p>
+      <h2 class="text-3xl sm:text-4xl lg:text-5xl font-heading font-bold uppercase tracking-wide">Choose Your <span class="text-primary">Plan</span></h2>
       <p class="mt-4 text-text-muted text-lg">Start free and upgrade as you grow.</p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
       <!-- Basic -->
-      <div class="gym-card border border-surface-light">
-        <h3 class="text-lg font-semibold text-text-muted">Basic</h3>
+      <div class="gym-card">
+        <h3 class="text-sm font-heading font-semibold text-text-muted uppercase tracking-wider">Basic</h3>
         <div class="mt-4 mb-6">
-          <span class="text-4xl font-bold">Free</span>
+          <span class="text-4xl font-heading font-extrabold">Free</span>
         </div>
         <ul class="space-y-3 text-sm text-text-muted mb-8">
-          <li class="flex items-center gap-2">
-            <span class="text-success">&#10003;</span> Workout tracking
+          <li class="flex items-center gap-2.5">
+            <svg class="w-4 h-4 text-accent shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+            Workout tracking
           </li>
-          <li class="flex items-center gap-2">
-            <span class="text-success">&#10003;</span> 5 workout plans
+          <li class="flex items-center gap-2.5">
+            <svg class="w-4 h-4 text-accent shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+            5 workout plans
           </li>
-          <li class="flex items-center gap-2">
-            <span class="text-success">&#10003;</span> Basic schedule
+          <li class="flex items-center gap-2.5">
+            <svg class="w-4 h-4 text-accent shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+            Basic schedule
           </li>
         </ul>
         <button (click)="auth.login()" class="btn-secondary w-full">Get Started</button>
       </div>
 
       <!-- Premium -->
-      <div class="gym-card border-2 border-primary relative">
-        <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">POPULAR</span>
-        <h3 class="text-lg font-semibold text-primary">Premium</h3>
+      <div class="gym-card !border-primary/50 relative">
+        <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-background text-xs font-heading font-bold px-4 py-1 rounded-full uppercase tracking-wider">Popular</span>
+        <h3 class="text-sm font-heading font-semibold text-primary uppercase tracking-wider">Premium</h3>
         <div class="mt-4 mb-6">
-          <span class="text-4xl font-bold">$9.99</span>
+          <span class="text-4xl font-heading font-extrabold">$9.99</span>
           <span class="text-text-muted text-sm">/month</span>
         </div>
         <ul class="space-y-3 text-sm text-text-muted mb-8">
-          <li class="flex items-center gap-2">
-            <span class="text-success">&#10003;</span> Unlimited workout plans
+          <li class="flex items-center gap-2.5">
+            <svg class="w-4 h-4 text-accent shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+            Unlimited workout plans
           </li>
-          <li class="flex items-center gap-2">
-            <span class="text-success">&#10003;</span> Advanced analytics
+          <li class="flex items-center gap-2.5">
+            <svg class="w-4 h-4 text-accent shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+            Advanced analytics
           </li>
-          <li class="flex items-center gap-2">
-            <span class="text-success">&#10003;</span> Priority support
+          <li class="flex items-center gap-2.5">
+            <svg class="w-4 h-4 text-accent shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+            Priority support
           </li>
-          <li class="flex items-center gap-2">
-            <span class="text-success">&#10003;</span> Custom schedules
+          <li class="flex items-center gap-2.5">
+            <svg class="w-4 h-4 text-accent shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+            Custom schedules
           </li>
         </ul>
         <button (click)="auth.login()" class="btn-primary w-full">Subscribe</button>
       </div>
 
       <!-- Elite -->
-      <div class="gym-card border border-accent">
-        <h3 class="text-lg font-semibold text-accent">Elite</h3>
+      <div class="gym-card !border-warning/30">
+        <h3 class="text-sm font-heading font-semibold text-warning uppercase tracking-wider">Elite</h3>
         <div class="mt-4 mb-6">
-          <span class="text-4xl font-bold">$19.99</span>
+          <span class="text-4xl font-heading font-extrabold">$19.99</span>
           <span class="text-text-muted text-sm">/month</span>
         </div>
         <ul class="space-y-3 text-sm text-text-muted mb-8">
-          <li class="flex items-center gap-2">
-            <span class="text-success">&#10003;</span> Everything in Premium
+          <li class="flex items-center gap-2.5">
+            <svg class="w-4 h-4 text-accent shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+            Everything in Premium
           </li>
-          <li class="flex items-center gap-2">
-            <span class="text-success">&#10003;</span> Personal trainer AI
+          <li class="flex items-center gap-2.5">
+            <svg class="w-4 h-4 text-accent shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+            Personal trainer AI
           </li>
-          <li class="flex items-center gap-2">
-            <span class="text-success">&#10003;</span> Nutrition planning
+          <li class="flex items-center gap-2.5">
+            <svg class="w-4 h-4 text-accent shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+            Nutrition planning
           </li>
-          <li class="flex items-center gap-2">
-            <span class="text-success">&#10003;</span> 1-on-1 coaching
+          <li class="flex items-center gap-2.5">
+            <svg class="w-4 h-4 text-accent shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+            1-on-1 coaching
           </li>
         </ul>
         <button (click)="auth.login()" class="btn-accent w-full">Go Elite</button>
@@ -151,12 +177,15 @@
 </section>
 
 <!-- CTA Section -->
-<section class="py-20 bg-background">
-  <div class="max-w-4xl mx-auto px-4 text-center">
-    <h2 class="text-3xl sm:text-4xl font-bold mb-4">Ready to Start Your Journey?</h2>
-    <p class="text-text-muted text-lg mb-8">Join thousands of members who have transformed their fitness with GymTrack.</p>
+<section class="py-20 sm:py-28 bg-background relative overflow-hidden">
+  <div class="absolute inset-0 opacity-5">
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary rounded-full blur-[200px]"></div>
+  </div>
+  <div class="relative max-w-4xl mx-auto px-4 text-center">
+    <h2 class="text-3xl sm:text-4xl lg:text-5xl font-heading font-bold uppercase tracking-wide mb-4">Ready to Start?</h2>
+    <p class="text-text-muted text-lg mb-10 max-w-2xl mx-auto">Join thousands of members who have transformed their fitness with GymTrack.</p>
     @if (!auth.isAuthenticated()) {
-      <button (click)="auth.login()" class="btn-accent text-lg py-3 px-10">Join GymTrack Now</button>
+      <button (click)="auth.login()" class="btn-primary text-lg py-4 px-12">Join GymTrack Now</button>
     }
   </div>
 </section>

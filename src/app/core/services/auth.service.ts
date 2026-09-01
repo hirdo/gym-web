@@ -15,6 +15,7 @@ export class AuthService {
   readonly isAuthenticated = signal(false);
   readonly userProfile = signal<Keycloak.KeycloakProfile | null>(null);
   readonly isInitialized = signal(false);
+  readonly isAdmin = signal(false);
 
   constructor() {
     effect(() => {
@@ -26,17 +27,20 @@ export class AuthService {
         this.isInitialized.set(true);
         if (args) {
           this.loadProfile();
+          this.checkAdminRole();
         }
       }
 
       if (event.type === KeycloakEventType.AuthLogout) {
         this.isAuthenticated.set(false);
         this.userProfile.set(null);
+        this.isAdmin.set(false);
       }
 
       if (event.type === KeycloakEventType.AuthSuccess) {
         this.isAuthenticated.set(true);
         this.loadProfile();
+        this.checkAdminRole();
       }
     });
   }
@@ -59,6 +63,15 @@ export class AuthService {
       return profile.firstName || profile.username || 'User';
     }
     return 'User';
+  }
+
+  hasRole(role: string): boolean {
+    return this.keycloak.hasRealmRole(role) ||
+      this.keycloak.hasResourceRole(role);
+  }
+
+  private checkAdminRole(): void {
+    this.isAdmin.set(this.keycloak.hasRealmRole('admin'));
   }
 
   private async loadProfile(): Promise<void> {

@@ -1,36 +1,51 @@
-<nav class="bg-secondary border-b border-surface-light">
+<nav class="bg-background/80 backdrop-blur-xl border-b border-border">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between h-16">
       <!-- Logo -->
-      <a routerLink="/" class="flex items-center gap-2 text-xl font-bold" (click)="closeMobileMenu()">
-        <span class="text-primary text-2xl">&#9899;</span>
-        <span class="text-text">Gym</span><span class="text-primary">Track</span>
+      <a routerLink="/" class="flex items-center gap-2 group" (click)="closeMobileMenu()">
+        <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+          <svg class="w-5 h-5 text-background" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z"/>
+          </svg>
+        </div>
+        <span class="font-heading text-xl font-bold tracking-wider uppercase">
+          <span class="text-text">Gym</span><span class="text-primary">Track</span>
+        </span>
       </a>
 
       <!-- Desktop nav -->
-      <div class="hidden md:flex items-center gap-6">
+      <div class="hidden md:flex items-center gap-1">
         @if (auth.isAuthenticated()) {
-          <a routerLink="/dashboard" routerLinkActive="text-primary" class="text-text-muted hover:text-text transition-colors">Dashboard</a>
-          <a routerLink="/workouts" routerLinkActive="text-primary" class="text-text-muted hover:text-text transition-colors">Workouts</a>
-          <a routerLink="/schedule" routerLinkActive="text-primary" class="text-text-muted hover:text-text transition-colors">Schedule</a>
-          <a routerLink="/membership" routerLinkActive="text-primary" class="text-text-muted hover:text-text transition-colors">Membership</a>
+          <a routerLink="/dashboard" routerLinkActive="!text-primary !bg-primary/10" class="px-4 py-2 text-text-muted hover:text-text text-sm font-heading font-semibold uppercase tracking-wider rounded-lg transition-colors">Dashboard</a>
+          <a routerLink="/workouts" routerLinkActive="!text-primary !bg-primary/10" class="px-4 py-2 text-text-muted hover:text-text text-sm font-heading font-semibold uppercase tracking-wider rounded-lg transition-colors">Workouts</a>
+          <a routerLink="/schedule" routerLinkActive="!text-primary !bg-primary/10" class="px-4 py-2 text-text-muted hover:text-text text-sm font-heading font-semibold uppercase tracking-wider rounded-lg transition-colors">Schedule</a>
+          <a routerLink="/membership" routerLinkActive="!text-primary !bg-primary/10" class="px-4 py-2 text-text-muted hover:text-text text-sm font-heading font-semibold uppercase tracking-wider rounded-lg transition-colors">Membership</a>
+          @if (auth.isAdmin()) {
+            <a routerLink="/admin" routerLinkActive="!text-primary !bg-primary/10" class="px-4 py-2 text-primary hover:text-primary-light text-sm font-heading font-semibold uppercase tracking-wider rounded-lg transition-colors flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+              Admin
+            </a>
+          }
         }
       </div>
 
       <!-- Desktop auth -->
-      <div class="hidden md:flex items-center gap-4">
+      <div class="hidden md:flex items-center gap-3">
         @if (auth.isAuthenticated()) {
-          <a routerLink="/profile" class="text-text-muted hover:text-text transition-colors">
-            {{ auth.getUserName() }}
+          <a routerLink="/profile" class="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-surface transition-colors group">
+            <div class="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary">
+              {{ auth.getUserName()[0] }}
+            </div>
+            <span class="text-sm text-text-muted group-hover:text-text transition-colors">{{ auth.getUserName() }}</span>
           </a>
-          <button (click)="auth.logout()" class="btn-secondary text-sm py-2 px-4">Logout</button>
+          <button (click)="auth.logout()" class="btn-secondary text-xs py-2 px-3">Logout</button>
         } @else {
-          <button (click)="auth.login()" class="btn-primary text-sm py-2 px-4">Login</button>
+          <button (click)="auth.login()" class="btn-primary text-sm py-2 px-5">Get Started</button>
         }
       </div>
 
       <!-- Mobile hamburger -->
-      <button class="md:hidden text-text-muted hover:text-text" (click)="toggleMobileMenu()">
+      <button class="md:hidden text-text-muted hover:text-text p-2 -mr-2 transition-colors" (click)="toggleMobileMenu()" aria-label="Toggle menu">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           @if (mobileMenuOpen()) {
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -44,18 +59,33 @@
 
   <!-- Mobile menu -->
   @if (mobileMenuOpen()) {
-    <div class="md:hidden bg-secondary border-t border-surface-light">
-      <div class="px-4 py-3 space-y-2">
+    <div class="md:hidden bg-surface border-t border-border">
+      <div class="px-4 py-3 space-y-1">
         @if (auth.isAuthenticated()) {
-          <a routerLink="/dashboard" routerLinkActive="text-primary" class="block py-2 text-text-muted hover:text-text" (click)="closeMobileMenu()">Dashboard</a>
-          <a routerLink="/workouts" routerLinkActive="text-primary" class="block py-2 text-text-muted hover:text-text" (click)="closeMobileMenu()">Workouts</a>
-          <a routerLink="/schedule" routerLinkActive="text-primary" class="block py-2 text-text-muted hover:text-text" (click)="closeMobileMenu()">Schedule</a>
-          <a routerLink="/membership" routerLinkActive="text-primary" class="block py-2 text-text-muted hover:text-text" (click)="closeMobileMenu()">Membership</a>
-          <a routerLink="/profile" routerLinkActive="text-primary" class="block py-2 text-text-muted hover:text-text" (click)="closeMobileMenu()">Profile</a>
-          <hr class="border-surface-light">
-          <button (click)="auth.logout()" class="block w-full text-left py-2 text-error">Logout</button>
+          <div class="flex items-center gap-3 px-3 py-3 mb-2">
+            <div class="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-sm font-bold text-primary">
+              {{ auth.getUserName()[0] }}
+            </div>
+            <div>
+              <p class="font-semibold text-sm">{{ auth.getUserName() }}</p>
+              <p class="text-text-muted text-xs">Member</p>
+            </div>
+          </div>
+          <a routerLink="/dashboard" routerLinkActive="!text-primary !bg-primary/10" class="block px-3 py-2.5 rounded-lg text-text-muted hover:text-text hover:bg-surface-light text-sm font-heading font-semibold uppercase tracking-wider transition-colors" (click)="closeMobileMenu()">Dashboard</a>
+          <a routerLink="/workouts" routerLinkActive="!text-primary !bg-primary/10" class="block px-3 py-2.5 rounded-lg text-text-muted hover:text-text hover:bg-surface-light text-sm font-heading font-semibold uppercase tracking-wider transition-colors" (click)="closeMobileMenu()">Workouts</a>
+          <a routerLink="/schedule" routerLinkActive="!text-primary !bg-primary/10" class="block px-3 py-2.5 rounded-lg text-text-muted hover:text-text hover:bg-surface-light text-sm font-heading font-semibold uppercase tracking-wider transition-colors" (click)="closeMobileMenu()">Schedule</a>
+          <a routerLink="/membership" routerLinkActive="!text-primary !bg-primary/10" class="block px-3 py-2.5 rounded-lg text-text-muted hover:text-text hover:bg-surface-light text-sm font-heading font-semibold uppercase tracking-wider transition-colors" (click)="closeMobileMenu()">Membership</a>
+          <a routerLink="/profile" routerLinkActive="!text-primary !bg-primary/10" class="block px-3 py-2.5 rounded-lg text-text-muted hover:text-text hover:bg-surface-light text-sm font-heading font-semibold uppercase tracking-wider transition-colors" (click)="closeMobileMenu()">Profile</a>
+          @if (auth.isAdmin()) {
+            <a routerLink="/admin" routerLinkActive="!text-primary !bg-primary/10" class="block px-3 py-2.5 rounded-lg text-primary hover:bg-primary/10 text-sm font-heading font-semibold uppercase tracking-wider transition-colors flex items-center gap-2" (click)="closeMobileMenu()">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+              Admin Panel
+            </a>
+          }
+          <div class="border-t border-border my-2"></div>
+          <button (click)="auth.logout()" class="block w-full text-left px-3 py-2.5 rounded-lg text-error hover:bg-error/10 text-sm font-heading font-semibold uppercase tracking-wider transition-colors cursor-pointer">Logout</button>
         } @else {
-          <button (click)="auth.login()" class="btn-primary w-full">Login</button>
+          <button (click)="auth.login()" class="btn-primary w-full">Get Started</button>
         }
       </div>
     </div>

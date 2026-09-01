@@ -1,58 +1,83 @@
-<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  <h1 class="text-3xl font-bold mb-8">Profile</h1>
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+  <h1 class="text-3xl sm:text-4xl font-heading font-bold uppercase tracking-wide mb-8">Profile</h1>
 
   @if (profileService.profile(); as profile) {
     <!-- User Info -->
-    <div class="gym-card mb-6">
-      <div class="flex items-center gap-6">
-        <div class="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center text-3xl font-bold text-primary">
+    <div class="gym-card mb-5">
+      <div class="flex items-center gap-5">
+        <div class="w-20 h-20 bg-gradient-to-br from-primary to-primary-dark rounded-2xl flex items-center justify-center text-3xl font-heading font-extrabold text-background shrink-0">
           {{ profile.firstName ? profile.firstName[0] : 'U' }}
         </div>
         <div>
-          <h2 class="text-2xl font-bold">{{ profile.firstName }} {{ profile.lastName }}</h2>
-          <p class="text-text-muted">{{ profile.email }}</p>
+          <h2 class="text-2xl font-heading font-bold uppercase tracking-wide">{{ profile.firstName }} {{ profile.lastName }}</h2>
+          <p class="text-text-muted text-sm mt-0.5">{{ profile.email }}</p>
           @if (profile.joinDate) {
-            <p class="text-text-muted text-sm mt-1">Member since {{ profile.joinDate | date:'MMMM yyyy' }}</p>
+            <p class="text-text-muted text-xs mt-1.5">
+              <svg class="w-3.5 h-3.5 inline -mt-0.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              Member since {{ profile.joinDate | date:'MMMM yyyy' }}
+            </p>
+          }
+          @if (auth.isAdmin()) {
+            <span class="inline-flex items-center gap-1.5 mt-2 px-3 py-1 rounded-md text-xs font-semibold bg-primary/15 text-primary uppercase tracking-wider">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+              Admin
+            </span>
           }
         </div>
       </div>
     </div>
 
     <!-- Membership -->
-    <div class="gym-card mb-6">
-      <h3 class="text-lg font-semibold mb-3">Membership</h3>
+    <div class="gym-card mb-5">
+      <h3 class="text-sm font-heading font-semibold uppercase tracking-wider text-text-muted mb-3">Membership</h3>
       <div class="flex items-center justify-between">
-        <div>
-          <span class="inline-block px-3 py-1 rounded-full text-sm font-medium bg-accent/20 text-accent capitalize">
-            {{ profile.membershipType || 'Basic' }}
-          </span>
-        </div>
+        <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-heading font-bold uppercase tracking-wider"
+              [class]="profile.membershipType === 'elite' ? 'bg-warning/15 text-warning' :
+                       profile.membershipType === 'premium' ? 'bg-primary/15 text-primary' :
+                       'bg-accent/15 text-accent'">
+          {{ profile.membershipType || 'Basic' }}
+        </span>
+        <a routerLink="/membership" class="text-primary text-sm font-heading font-semibold uppercase tracking-wider hover:text-primary-light transition-colors">Upgrade</a>
       </div>
     </div>
 
     <!-- Stats -->
-    <div class="gym-card mb-6">
-      <h3 class="text-lg font-semibold mb-3">Your Stats</h3>
+    <div class="gym-card mb-5">
+      <h3 class="text-sm font-heading font-semibold uppercase tracking-wider text-text-muted mb-4">Your Stats</h3>
       <div class="grid grid-cols-2 gap-4">
-        <div>
-          <p class="text-text-muted text-sm">Total Workouts</p>
-          <p class="text-2xl font-bold text-primary">{{ workoutService.totalWorkouts() }}</p>
+        <div class="bg-background rounded-xl p-4 text-center">
+          <p class="text-[10px] text-text-muted font-semibold uppercase tracking-wider mb-1">Total Workouts</p>
+          <p class="text-3xl font-heading font-extrabold text-primary">{{ workoutService.totalWorkouts() }}</p>
         </div>
-        <div>
-          <p class="text-text-muted text-sm">Completed</p>
-          <p class="text-2xl font-bold text-success">{{ workoutService.completedWorkouts() }}</p>
+        <div class="bg-background rounded-xl p-4 text-center">
+          <p class="text-[10px] text-text-muted font-semibold uppercase tracking-wider mb-1">Completed</p>
+          <p class="text-3xl font-heading font-extrabold text-accent">{{ workoutService.completedWorkouts() }}</p>
         </div>
       </div>
     </div>
   } @else {
-    <div class="gym-card text-center py-8">
+    <div class="gym-card text-center py-12">
+      <div class="w-12 h-12 mx-auto mb-3">
+        <div class="w-12 h-12 border-4 border-surface-light border-t-primary rounded-full animate-spin"></div>
+      </div>
       <p class="text-text-muted">Loading profile...</p>
     </div>
   }
 
-  <!-- Logout -->
+  <!-- Account Actions -->
   <div class="gym-card">
-    <h3 class="text-lg font-semibold mb-3">Account</h3>
-    <button (click)="auth.logout()" class="btn-secondary hover:text-error">Sign Out</button>
+    <h3 class="text-sm font-heading font-semibold uppercase tracking-wider text-text-muted mb-4">Account</h3>
+    <div class="flex flex-wrap gap-3">
+      @if (auth.isAdmin()) {
+        <a routerLink="/admin" class="btn-secondary text-sm py-2.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          Admin Panel
+        </a>
+      }
+      <button (click)="auth.logout()" class="btn-secondary text-sm py-2.5 hover:!text-error hover:!border-error/50">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        Sign Out
+      </button>
+    </div>
   </div>
 </div>

@@ -69,6 +69,15 @@ export const routes: Routes = [
     canActivate: [canActivateAuth]
   },
   {
+    path: 'admin',
+    loadComponent: () =>
+      import('./features/admin/admin.component').then(
+        (m) => m.AdminComponent
+      ),
+    canActivate: [canActivateAuth],
+    data: { roles: ['admin'] }
+  },
+  {
     path: '**',
     redirectTo: ''
   }
