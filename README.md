@@ -25,7 +25,7 @@ A gym-themed fitness tracking web application with real-time data sync, Keycloak
 | <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" width="20" /> | **TypeScript 5.7** | Strict mode, type-safe throughout |
 | <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg" width="20" /> | **Tailwind CSS 4.3** | Dark theme, CSS-native `@theme` tokens |
 | <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-plain.svg" width="20" /> | **Firebase 12** | Firestore real-time sync, `onSnapshot` subscriptions |
-| <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" width="20" /> | **Keycloak 26** | OpenID Connect, PKCE S256, SSO-ready |
+| <img src="https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/keycloak.svg" width="20" /> | **Keycloak 26** | OpenID Connect, PKCE S256, SSO-ready |
 | <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vercel/vercel-original.svg" width="20" /> | **Vercel** | Static SPA deployment, build-time env injection |
 
 ## Features
