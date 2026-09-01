@@ -2,7 +2,7 @@ import { inject, Injectable, signal, computed, effect, OnDestroy } from '@angula
 import { Workout } from '../models/workout.model';
 import { AuthService } from './auth.service';
 import { FirestoreService } from './firestore.service';
-import { where, orderBy, Unsubscribe } from 'firebase/firestore';
+import { where, Unsubscribe } from 'firebase/firestore';
 
 @Injectable({ providedIn: 'root' })
 export class WorkoutService implements OnDestroy {
@@ -93,9 +93,11 @@ export class WorkoutService implements OnDestroy {
   private subscribeToWorkouts(userId: string): void {
     this.unsubscribe = this.firestore.subscribe<Workout>(
       this.COLLECTION,
-      (workouts) => this.workoutsSignal.set(workouts),
-      where('userId', '==', userId),
-      orderBy('updatedAt', 'desc')
+      (workouts) => {
+        workouts.sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''));
+        this.workoutsSignal.set(workouts);
+      },
+      where('userId', '==', userId)
     );
   }
 
