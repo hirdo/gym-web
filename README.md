@@ -103,33 +103,25 @@ The build command `npm run build:vercel` runs `scripts/set-env.js` to inject the
 
 For production, you need a Keycloak server accessible via HTTPS.
 
-### Render.com (Free Tier)
+### Cloud-IAM (Recommended)
 
-1. Create a **Web Service** with Docker image: `quay.io/keycloak/keycloak:26.0`
-2. Start command:
-   ```
-   /opt/keycloak/bin/kc.sh start-dev --cache=local --hostname=<your-service>.onrender.com --proxy-headers=xforwarded --http-enabled=true
-   ```
-3. Environment variables:
-   ```
-   KC_CACHE=local
-   KC_DB=dev-file
-   KC_HTTP_HOST=0.0.0.0
-   KC_HTTP_PORT=10000
-   KEYCLOAK_ADMIN=admin
-   KEYCLOAK_ADMIN_PASSWORD=<your-password>
-   KC_HEALTH_ENABLED=true
-   KC_HOSTNAME_STRICT=false
-   JAVA_OPTS_APPEND=-Xms128m -Xmx256m -XX:MetaspaceSize=96m -XX:MaxMetaspaceSize=256m
-   ```
-4. Set the service **Port** to `10000`
+Managed Keycloak-as-a-Service — no Docker, no server management, always online:
 
-### Other Options
+1. Sign up at [cloud-iam.com](https://www.cloud-iam.com)
+2. Create a Keycloak instance (free tier: 1 realm, 100 users)
+3. Your instance URL: `https://<your-instance>.cloud-iam.com`
+4. Create realm `gym-app` and client `gym-web-client`
+5. Set `KEYCLOAK_URL` in Vercel to your Cloud-IAM URL
 
-- **Railway.app** — Free trial credit, Docker support
-- **Fly.io** — Free tier VM with Docker
-- **Self-hosted** — Any VPS with Docker
-- **Managed** — cloud-iam.com or Phase Two (free tier)
+### Self-Hosted Alternatives
+
+| Option | Notes |
+|---|---|
+| **Railway.app** | Free trial credit, Docker support |
+| **Fly.io** | Free tier VM with Docker |
+| **Render.com** | Free tier (512MB RAM, cold starts) |
+| **Any VPS** | Docker + `quay.io/keycloak/keycloak:26.0` |
+| **Phase Two** | Managed Keycloak with extensions (free tier) |
 
 ### Production Client Config
 
