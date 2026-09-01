@@ -87,8 +87,8 @@ Set these environment variables in Vercel project settings:
 
 | Variable | Description |
 |---|---|
-| `KEYCLOAK_URL` | Production Keycloak URL (HTTPS) |
-| `KEYCLOAK_REALM` | Realm name (default: `gym-app`) |
+| `KEYCLOAK_URL` | Production Keycloak URL (HTTPS) | (add "/auth" at the end if creating with Cloud-IAM)
+| `KEYCLOAK_REALM` | Realm name (default: `gym-tracking`) |
 | `KEYCLOAK_CLIENT_ID` | Client ID (default: `gym-web-client`) |
 | `FIREBASE_API_KEY` | Firebase API key |
 | `FIREBASE_AUTH_DOMAIN` | Firebase auth domain |
@@ -110,7 +110,7 @@ Managed Keycloak-as-a-Service — no Docker, no server management, always online
 1. Sign up at [cloud-iam.com](https://www.cloud-iam.com)
 2. Create a Keycloak instance (free tier: 1 realm, 100 users)
 3. Your instance URL: `https://<your-instance>.cloud-iam.com`
-4. Create realm `gym-app` and client `gym-web-client`
+4. Create realm `gym-tracking` and client `gym-web-client`
 5. Set `KEYCLOAK_URL` in Vercel to your Cloud-IAM URL
 
 ### Self-Hosted Alternatives
@@ -126,6 +126,7 @@ Managed Keycloak-as-a-Service — no Docker, no server management, always online
 ### Production Client Config
 
 - Client type: Public (OpenID Connect)
-- Valid redirect URIs: `https://your-domain.vercel.app/*`
-- Web origins: `https://your-domain.vercel.app`
-- PKCE: S256
+- Root URL:	https://gym-tracking-only.vercel.app
+- Valid redirect URIs:	https://gym-tracking-only.vercel.app/*
+- Valid post logout redirect URIs: https://gym-tracking-only.vercel.app/*
+- Web origins:	https://gym-tracking-only.vercel.app
