@@ -1,38 +1,126 @@
 <!-- Hero Section -->
 <section class="gym-gradient relative overflow-hidden">
-  <div class="absolute inset-0 opacity-10">
-    <div class="absolute top-20 right-10 w-72 h-72 bg-primary rounded-full blur-[128px]"></div>
-    <div class="absolute bottom-20 left-10 w-96 h-96 bg-primary-dark rounded-full blur-[128px]"></div>
+  <!-- Background layers -->
+  <div class="absolute inset-0">
+    <div class="absolute inset-0 hero-grid-pattern"></div>
+    <div class="absolute inset-0 hero-diagonal-lines"></div>
+    <div class="absolute top-10 right-[15%] w-80 h-80 bg-primary rounded-full blur-[128px] opacity-[0.15]"></div>
+    <div class="absolute bottom-10 left-[5%] w-96 h-96 bg-primary-dark rounded-full blur-[128px] opacity-[0.12]"></div>
+    <div class="absolute top-[40%] right-[30%] w-64 h-64 bg-accent rounded-full blur-[128px] opacity-[0.06]"></div>
+    <div class="absolute bottom-[20%] right-[10%] w-48 h-48 bg-warning rounded-full blur-[100px] opacity-[0.05]"></div>
   </div>
+
   <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32 lg:py-40">
-    <div class="max-w-3xl">
-      <p class="text-primary font-heading font-semibold text-sm uppercase tracking-[0.2em] mb-4">Your Personal Fitness Companion</p>
-      <h1 class="text-5xl sm:text-6xl lg:text-7xl font-heading font-extrabold leading-[0.95] tracking-wide uppercase">
-        Transform Your
-        <span class="text-primary">Fitness</span>
-        Journey
-      </h1>
-      <p class="mt-6 text-lg sm:text-xl text-text-muted leading-relaxed max-w-2xl">
-        Track your workouts, monitor progress, and crush your goals with GymTrack.
-        Built for athletes who demand results.
-      </p>
-      <div class="mt-10 flex flex-wrap gap-4">
-        @if (auth.isAuthenticated()) {
-          <a routerLink="/dashboard" class="btn-primary text-lg py-4 px-10">Go to Dashboard</a>
-        } @else {
-          <button (click)="auth.register()" class="btn-primary text-lg py-4 px-10">Get Started Free</button>
-          <button (click)="auth.login()" class="btn-secondary text-lg py-4 px-8">Sign In</button>
-        }
+    <div class="flex items-center gap-12 lg:gap-16">
+      <!-- Left column: text content -->
+      <div class="flex-1 max-w-2xl">
+        <p class="text-primary font-heading font-semibold text-sm uppercase tracking-[0.2em] mb-3">Your Personal Fitness Companion</p>
+        <div class="hero-accent-line h-0.5 bg-primary rounded-full mb-6"></div>
+        <h1 class="text-5xl sm:text-6xl lg:text-7xl font-heading font-extrabold leading-[0.95] tracking-wide uppercase">
+          Transform Your
+          <span class="hero-highlight">Fitness</span>
+          Journey
+        </h1>
+        <p class="mt-6 text-lg sm:text-xl text-text-muted leading-relaxed max-w-xl">
+          Track your workouts, monitor progress, and crush your goals with GymTrack.
+          Built for athletes who demand results.
+        </p>
+        <div class="mt-10 flex flex-wrap gap-4">
+          @if (auth.isAuthenticated()) {
+            <a routerLink="/dashboard" class="btn-primary text-lg py-4 px-10">Go to Dashboard</a>
+          } @else {
+            <button (click)="auth.register()" class="btn-primary text-lg py-4 px-10">Get Started Free</button>
+            <button (click)="auth.login()" class="btn-secondary text-lg py-4 px-8">Sign In</button>
+          }
+        </div>
+        <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-text-muted">
+          <span class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+            Free forever plan
+          </span>
+          <span class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+            No credit card needed
+          </span>
+          <span class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+            Track sets, reps & weights
+          </span>
+        </div>
       </div>
-      <div class="mt-8 flex items-center gap-6 text-sm text-text-muted">
-        <span class="flex items-center gap-2">
-          <svg class="w-4 h-4 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-          Free forever plan
-        </span>
-        <span class="flex items-center gap-2">
-          <svg class="w-4 h-4 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-          No credit card needed
-        </span>
+
+      <!-- Right column: SVG illustration + floating stat badges (desktop only) -->
+      <div class="hidden lg:block relative w-[420px] h-[480px] shrink-0" aria-hidden="true">
+        <!-- Decorative ring elements -->
+        <svg class="absolute inset-0 w-full h-full" viewBox="0 0 420 480" fill="none">
+          <circle cx="210" cy="240" r="180" stroke="rgba(249,115,22,0.08)" stroke-width="1" class="hero-float"/>
+          <circle cx="210" cy="240" r="140" stroke="rgba(249,115,22,0.12)" stroke-width="1" stroke-dasharray="8 6" class="hero-float-delayed"/>
+          <circle cx="210" cy="240" r="100" stroke="rgba(249,115,22,0.06)" stroke-width="1" class="hero-float-delayed-2"/>
+        </svg>
+
+        <!-- Barbell SVG illustration -->
+        <svg class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 hero-glow hero-float" viewBox="0 0 200 200" fill="none">
+          <!-- Barbell bar -->
+          <rect x="30" y="96" width="140" height="8" rx="4" fill="rgba(249,115,22,0.9)"/>
+          <!-- Left weight plates -->
+          <rect x="18" y="72" width="16" height="56" rx="4" fill="rgba(249,115,22,0.7)"/>
+          <rect x="8" y="80" width="12" height="40" rx="3" fill="rgba(249,115,22,0.5)"/>
+          <!-- Right weight plates -->
+          <rect x="166" y="72" width="16" height="56" rx="4" fill="rgba(249,115,22,0.7)"/>
+          <rect x="180" y="80" width="12" height="40" rx="3" fill="rgba(249,115,22,0.5)"/>
+          <!-- Left collar -->
+          <rect x="34" y="88" width="6" height="24" rx="2" fill="rgba(249,115,22,0.6)"/>
+          <!-- Right collar -->
+          <rect x="160" y="88" width="6" height="24" rx="2" fill="rgba(249,115,22,0.6)"/>
+          <!-- Center grip lines -->
+          <line x1="88" y1="96" x2="88" y2="104" stroke="rgba(249,115,22,0.4)" stroke-width="1.5"/>
+          <line x1="96" y1="96" x2="96" y2="104" stroke="rgba(249,115,22,0.4)" stroke-width="1.5"/>
+          <line x1="104" y1="96" x2="104" y2="104" stroke="rgba(249,115,22,0.4)" stroke-width="1.5"/>
+          <line x1="112" y1="96" x2="112" y2="104" stroke="rgba(249,115,22,0.4)" stroke-width="1.5"/>
+        </svg>
+
+        <!-- Stat badge: Workouts Tracked -->
+        <div class="stat-badge absolute top-6 right-0 hero-float">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 bg-primary/15 rounded-lg flex items-center justify-center shrink-0">
+              <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+            </div>
+            <div>
+              <p class="text-lg font-heading font-bold text-text leading-none">1,247</p>
+              <p class="text-xs text-text-muted mt-0.5">Workouts Tracked</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stat badge: Goal Completion -->
+        <div class="stat-badge absolute top-[45%] -left-6 hero-float-delayed">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 shrink-0 relative">
+              <svg class="w-9 h-9 -rotate-90" viewBox="0 0 36 36">
+                <circle cx="18" cy="18" r="16" fill="none" class="progress-ring-bg" stroke-width="2.5"/>
+                <circle cx="18" cy="18" r="16" fill="none" class="progress-ring-fill" stroke-width="2.5"
+                  stroke-dasharray="98 100"/>
+              </svg>
+            </div>
+            <div>
+              <p class="text-lg font-heading font-bold text-text leading-none">98%</p>
+              <p class="text-xs text-text-muted mt-0.5">Goal Completion</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stat badge: Week Streak -->
+        <div class="stat-badge absolute bottom-12 right-4 hero-float-delayed-2">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 bg-warning/15 rounded-lg flex items-center justify-center shrink-0">
+              <svg class="w-5 h-5 text-warning" fill="currentColor" viewBox="0 0 24 24"><path d="M12 23a7.5 7.5 0 01-5.138-12.963C8.204 8.774 11.5 6.5 11 1.5c6 4 9 8 3 14 1 0 2.5 0 5-2.47.27.97.5 2.47.5 3.97A7.5 7.5 0 0112 23z"/></svg>
+            </div>
+            <div>
+              <p class="text-lg font-heading font-bold text-text leading-none">12 Week</p>
+              <p class="text-xs text-text-muted mt-0.5">Active Streak</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

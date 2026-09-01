@@ -173,6 +173,56 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   cursor: pointer;
 }
 
+@keyframes hero-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes hero-float-delayed {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes hero-draw-line {
+  from { width: 0; }
+  to { width: 3rem; }
+}
+
+@keyframes hero-pulse-ring {
+  0%, 100% { opacity: 0.15; transform: scale(1); }
+  50% { opacity: 0.25; transform: scale(1.05); }
+}
+
+.hero-float {
+  animation: hero-float 8s ease-in-out infinite;
+}
+
+.hero-float-delayed {
+  animation: hero-float-delayed 7s ease-in-out infinite;
+  animation-delay: 2s;
+}
+
+.hero-float-delayed-2 {
+  animation: hero-float 9s ease-in-out infinite;
+  animation-delay: 4s;
+}
+
+.hero-highlight {
+  background: linear-gradient(135deg, #f97316, #fb923c, #f59e0b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 30px rgba(249, 115, 22, 0.3));
+}
+
+.hero-glow {
+  filter: drop-shadow(0 0 20px rgba(249, 115, 22, 0.4));
+}
+
+.hero-accent-line {
+  animation: hero-draw-line 1s ease-out 0.5s both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -181,5 +231,16 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+
+  .hero-float,
+  .hero-float-delayed,
+  .hero-float-delayed-2 {
+    animation: none !important;
+  }
+
+  .hero-accent-line {
+    animation: none !important;
+    width: 3rem;
   }
 }
