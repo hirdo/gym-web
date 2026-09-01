@@ -101,7 +101,7 @@ export class WorkoutCreateComponent implements OnInit {
     }
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (this.form.invalid) return;
 
     const value = this.form.getRawValue();
@@ -116,7 +116,7 @@ export class WorkoutCreateComponent implements OnInit {
     }));
 
     if (this.isEditMode() && this.editId) {
-      this.workoutService.update(this.editId, {
+      await this.workoutService.update(this.editId, {
         name: value.name!,
         description: value.description || undefined,
         category: value.category as WorkoutCategory,
@@ -125,7 +125,7 @@ export class WorkoutCreateComponent implements OnInit {
       });
       this.router.navigate(['/workouts', this.editId]);
     } else {
-      const workout = this.workoutService.add({
+      const workout = await this.workoutService.add({
         name: value.name!,
         description: value.description || undefined,
         category: value.category as WorkoutCategory,

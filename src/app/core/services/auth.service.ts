@@ -6,11 +6,13 @@ import {
   typeEventArgs,
   ReadyArgs
 } from 'keycloak-angular';
+import { FirestoreService } from './firestore.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly keycloak = inject(Keycloak);
   private readonly keycloakSignal = inject(KEYCLOAK_EVENT_SIGNAL);
+  private readonly firestore = inject(FirestoreService);
 
   readonly isAuthenticated = signal(false);
   readonly userProfile = signal<Keycloak.KeycloakProfile | null>(null);
@@ -94,20 +96,37 @@ export class AuthService {
       const profile = await this.keycloak.loadUserProfile();
       this.userProfile.set(profile);
       this.profileError.set(false);
+      this.syncProfileToFirestore(profile);
     } catch {
       this.profileError.set(true);
       const token = this.keycloak.tokenParsed;
       if (token) {
-        this.userProfile.set({
+        const fallback: Keycloak.KeycloakProfile = {
           id: (token['sub'] as string) || '',
           username: (token['preferred_username'] as string) || '',
           email: (token['email'] as string) || '',
           firstName: (token['given_name'] as string) || '',
           lastName: (token['family_name'] as string) || '',
-        });
+        };
+        this.userProfile.set(fallback);
+        this.syncProfileToFirestore(fallback);
       }
     } finally {
       this.profileLoaded.set(true);
     }
+  }
+
+  private syncProfileToFirestore(profile: Keycloak.KeycloakProfile): void {
+    const uid = this.userId();
+    if (!uid) return;
+    this.firestore.setDocument('users', uid, {
+      username: profile.username || '',
+      email: profile.email || '',
+      firstName: profile.firstName || '',
+      lastName: profile.lastName || '',
+      role: this.keycloak.hasRealmRole('admin') ? 'admin' : 'user',
+      lastLogin: new Date().toISOString(),
+      createdAt: new Date().toISOString()
+    }, true);
   }
 }

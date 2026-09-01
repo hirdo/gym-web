@@ -16,12 +16,12 @@ export class MembershipComponent {
 
   readonly currentPlan = computed(() => this.membershipService.membership());
 
-  upgradeTo(tier: MembershipTier): void {
-    this.membershipService.upgrade(tier);
+  async upgradeTo(tier: MembershipTier): Promise<void> {
+    await this.membershipService.upgrade(tier);
   }
 
-  downgrade(): void {
-    this.membershipService.upgrade('basic');
+  async downgrade(): Promise<void> {
+    await this.membershipService.upgrade('basic');
   }
 
   isCurrentPlan(tier: MembershipTier): boolean {

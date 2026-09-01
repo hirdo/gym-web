@@ -1,12 +1,13 @@
 import { inject, Injectable, signal, effect } from '@angular/core';
 import { AuthService } from './auth.service';
+import { FirestoreService } from './firestore.service';
 
 export type MembershipTier = 'basic' | 'premium' | 'elite';
 
 @Injectable({ providedIn: 'root' })
 export class MembershipService {
   private readonly auth = inject(AuthService);
-  private readonly STORAGE_PREFIX = 'gymtrack-membership-';
+  private readonly firestore = inject(FirestoreService);
 
   readonly membership = signal<MembershipTier>('basic');
 
@@ -19,40 +20,33 @@ export class MembershipService {
     });
   }
 
-  upgrade(tier: MembershipTier): void {
+  async upgrade(tier: MembershipTier): Promise<void> {
     this.membership.set(tier);
-    this.saveMembership();
+    const userId = this.auth.userId();
+    if (userId) {
+      await this.firestore.updateDocument('users', userId, { membership: tier });
+    }
   }
 
-  getMembershipForUser(userId: string): MembershipTier {
-    try {
-      const data = localStorage.getItem(this.STORAGE_PREFIX + userId);
-      if (data && ['basic', 'premium', 'elite'].includes(data)) {
-        return data as MembershipTier;
-      }
-    } catch {}
+  async getMembershipForUser(userId: string): Promise<MembershipTier> {
+    const doc = await this.firestore.getDocument<{ membership?: string }>('users', userId);
+    const tier = doc?.membership;
+    if (tier && ['basic', 'premium', 'elite'].includes(tier)) {
+      return tier as MembershipTier;
+    }
     return 'basic';
   }
 
-  setMembershipForUser(userId: string, tier: MembershipTier): void {
-    try {
-      localStorage.setItem(this.STORAGE_PREFIX + userId, tier);
-    } catch {}
+  async setMembershipForUser(userId: string, tier: MembershipTier): Promise<void> {
+    await this.firestore.updateDocument('users', userId, { membership: tier });
     const currentUserId = this.auth.userId();
     if (currentUserId === userId) {
       this.membership.set(tier);
     }
   }
 
-  private loadMembership(userId: string): void {
-    this.membership.set(this.getMembershipForUser(userId));
-  }
-
-  private saveMembership(): void {
-    const userId = this.auth.userId();
-    if (!userId) return;
-    try {
-      localStorage.setItem(this.STORAGE_PREFIX + userId, this.membership());
-    } catch {}
+  private async loadMembership(userId: string): Promise<void> {
+    const tier = await this.getMembershipForUser(userId);
+    this.membership.set(tier);
   }
 }

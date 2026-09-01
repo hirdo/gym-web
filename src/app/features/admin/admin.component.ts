@@ -1,18 +1,20 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { AuthService } from '../../core/services/auth.service';
 import { MembershipService, MembershipTier } from '../../core/services/membership.service';
+import { WorkoutService } from '../../core/services/workout.service';
+import { FirestoreService } from '../../core/services/firestore.service';
 
-interface MockUser {
+interface AdminUser {
   id: string;
   username: string;
   email: string;
   firstName: string;
   lastName: string;
-  role: 'user' | 'admin';
-  status: 'active' | 'suspended';
-  membershipType: MembershipTier;
-  joinDate: string;
+  role: string;
+  membership: MembershipTier;
   lastLogin: string;
+  createdAt: string;
+  workoutCount: number;
 }
 
 @Component({
@@ -22,116 +24,96 @@ interface MockUser {
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.scss'
 })
-export class AdminComponent {
+export class AdminComponent implements OnInit {
   readonly auth = inject(AuthService);
   readonly membershipService = inject(MembershipService);
+  private readonly workoutService = inject(WorkoutService);
+  private readonly firestore = inject(FirestoreService);
   readonly activeTab = signal<'users' | 'stats'>('users');
-
-  readonly users = signal<MockUser[]>([
-    {
-      id: '1',
-      username: 'testuser',
-      email: 'testuser@gymtrack.app',
-      firstName: 'Test',
-      lastName: 'User',
-      role: 'user',
-      status: 'active',
-      membershipType: 'basic',
-      joinDate: '2025-01-15T00:00:00Z',
-      lastLogin: '2026-08-30T14:22:00Z'
-    },
-    {
-      id: '2',
-      username: 'admin',
-      email: 'admin@gymtrack.app',
-      firstName: 'Admin',
-      lastName: 'User',
-      role: 'admin',
-      status: 'active',
-      membershipType: 'premium',
-      joinDate: '2024-12-01T00:00:00Z',
-      lastLogin: '2026-08-31T09:15:00Z'
-    },
-    {
-      id: '3',
-      username: 'janefit',
-      email: 'jane@gymtrack.app',
-      firstName: 'Jane',
-      lastName: 'Smith',
-      role: 'user',
-      status: 'active',
-      membershipType: 'elite',
-      joinDate: '2025-03-10T00:00:00Z',
-      lastLogin: '2026-08-28T18:45:00Z'
-    },
-    {
-      id: '4',
-      username: 'mike_iron',
-      email: 'mike@gymtrack.app',
-      firstName: 'Mike',
-      lastName: 'Johnson',
-      role: 'user',
-      status: 'suspended',
-      membershipType: 'basic',
-      joinDate: '2025-06-20T00:00:00Z',
-      lastLogin: '2026-07-15T10:30:00Z'
-    },
-    {
-      id: '5',
-      username: 'sarah_lifts',
-      email: 'sarah@gymtrack.app',
-      firstName: 'Sarah',
-      lastName: 'Williams',
-      role: 'user',
-      status: 'active',
-      membershipType: 'premium',
-      joinDate: '2025-08-05T00:00:00Z',
-      lastLogin: '2026-08-31T07:00:00Z'
-    }
-  ]);
+  readonly users = signal<AdminUser[]>([]);
+  readonly loading = signal(true);
 
   get activeUsers(): number {
-    return this.users().filter(u => u.status === 'active').length;
+    return this.users().length;
   }
 
   get suspendedUsers(): number {
-    return this.users().filter(u => u.status === 'suspended').length;
+    return 0;
   }
 
   get adminCount(): number {
     return this.users().filter(u => u.role === 'admin').length;
   }
 
-  toggleUserStatus(userId: string): void {
+  get basicCount(): number {
+    return this.users().filter(u => u.membership === 'basic').length;
+  }
+
+  get premiumCount(): number {
+    return this.users().filter(u => u.membership === 'premium').length;
+  }
+
+  get eliteCount(): number {
+    return this.users().filter(u => u.membership === 'elite').length;
+  }
+
+  membershipPercent(tier: MembershipTier): number {
+    const total = this.users().length;
+    if (!total) return 0;
+    return this.users().filter(u => u.membership === tier).length / total * 100;
+  }
+
+  ngOnInit(): void {
+    this.loadUsers();
+  }
+
+  async loadUsers(): Promise<void> {
+    this.loading.set(true);
+    try {
+      const userDocs = await this.firestore.queryDocuments<AdminUser>('users');
+      const workoutData = await this.workoutService.getAllWorkoutsForAdmin();
+      const workoutCounts = new Map(workoutData.map(w => [w.userId, w.workouts.length]));
+
+      const users: AdminUser[] = userDocs.map(u => ({
+        id: u.id,
+        username: u.username || '',
+        email: u.email || '',
+        firstName: u.firstName || '',
+        lastName: u.lastName || '',
+        role: u.role || 'user',
+        membership: (['basic', 'premium', 'elite'].includes(u.membership) ? u.membership : 'basic') as MembershipTier,
+        lastLogin: u.lastLogin || '',
+        createdAt: u.createdAt || '',
+        workoutCount: workoutCounts.get(u.id) || 0
+      }));
+
+      this.users.set(users);
+    } catch {
+      this.users.set([]);
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  async toggleUserRole(userId: string): Promise<void> {
+    const user = this.users().find(u => u.id === userId);
+    if (!user) return;
+    const newRole = user.role === 'admin' ? 'user' : 'admin';
+    await this.firestore.updateDocument('users', userId, { role: newRole });
     this.users.update(users =>
-      users.map(u =>
-        u.id === userId
-          ? { ...u, status: u.status === 'active' ? 'suspended' as const : 'active' as const }
-          : u
-      )
+      users.map(u => u.id === userId ? { ...u, role: newRole } : u)
     );
   }
 
-  toggleUserRole(userId: string): void {
+  async changeMembership(userId: string, tier: MembershipTier): Promise<void> {
+    await this.membershipService.setMembershipForUser(userId, tier);
     this.users.update(users =>
-      users.map(u =>
-        u.id === userId
-          ? { ...u, role: u.role === 'admin' ? 'user' as const : 'admin' as const }
-          : u
-      )
+      users.map(u => u.id === userId ? { ...u, membership: tier } : u)
     );
-  }
-
-  changeMembership(userId: string, tier: MembershipTier): void {
-    this.users.update(users =>
-      users.map(u =>
-        u.id === userId ? { ...u, membershipType: tier } : u
-      )
-    );
-    this.membershipService.setMembershipForUser(userId, tier);
   }
 
   formatDate(dateStr: string): string {
+    if (!dateStr) return '-';
     return new Date(dateStr).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
@@ -140,6 +122,7 @@ export class AdminComponent {
   }
 
   formatDateTime(dateStr: string): string {
+    if (!dateStr) return '-';
     return new Date(dateStr).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',

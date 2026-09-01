@@ -19,17 +19,17 @@ export class WorkoutDetailComponent {
     return id ? this.workoutService.getById(id) : undefined;
   });
 
-  markComplete(): void {
+  async markComplete(): Promise<void> {
     const w = this.workout();
     if (w) {
-      this.workoutService.markComplete(w.id);
+      await this.workoutService.markComplete(w.id);
     }
   }
 
-  deleteWorkout(): void {
+  async deleteWorkout(): Promise<void> {
     const w = this.workout();
     if (w) {
-      this.workoutService.delete(w.id);
+      await this.workoutService.delete(w.id);
       this.router.navigate(['/workouts']);
     }
   }
