@@ -20,7 +20,7 @@
         @if (auth.isAuthenticated()) {
           <a routerLink="/dashboard" class="btn-primary text-lg py-4 px-10">Go to Dashboard</a>
         } @else {
-          <button (click)="auth.login()" class="btn-primary text-lg py-4 px-10">Get Started Free</button>
+          <button (click)="auth.register()" class="btn-primary text-lg py-4 px-10">Get Started Free</button>
           <button (click)="auth.login()" class="btn-secondary text-lg py-4 px-8">Sign In</button>
         }
       </div>
@@ -113,7 +113,7 @@
             Basic schedule
           </li>
         </ul>
-        <button (click)="auth.login()" class="btn-secondary w-full">Get Started</button>
+        <button (click)="auth.register()" class="btn-secondary w-full">Get Started</button>
       </div>
 
       <!-- Premium -->
@@ -142,7 +142,7 @@
             Custom schedules
           </li>
         </ul>
-        <button (click)="auth.login()" class="btn-primary w-full">Subscribe</button>
+        <button (click)="auth.register()" class="btn-primary w-full">Subscribe</button>
       </div>
 
       <!-- Elite -->
@@ -170,7 +170,7 @@
             1-on-1 coaching
           </li>
         </ul>
-        <button (click)="auth.login()" class="btn-accent w-full">Go Elite</button>
+        <button (click)="auth.register()" class="btn-accent w-full">Go Elite</button>
       </div>
     </div>
   </div>
@@ -185,7 +185,7 @@
     <h2 class="text-3xl sm:text-4xl lg:text-5xl font-heading font-bold uppercase tracking-wide mb-4">Ready to Start?</h2>
     <p class="text-text-muted text-lg mb-10 max-w-2xl mx-auto">Join thousands of members who have transformed their fitness with GymTrack.</p>
     @if (!auth.isAuthenticated()) {
-      <button (click)="auth.login()" class="btn-primary text-lg py-4 px-12">Join GymTrack Now</button>
+      <button (click)="auth.register()" class="btn-primary text-lg py-4 px-12">Join GymTrack Now</button>
     }
   </div>
 </section>

@@ -61,6 +61,10 @@ export class AuthService {
     this.keycloak.login();
   }
 
+  register(): void {
+    this.keycloak.register();
+  }
+
   logout(): void {
     this.keycloak.logout({ redirectUri: window.location.origin });
   }

@@ -40,7 +40,7 @@
         <div class="space-y-1.5">
           @for (workout of getWorkoutsForDate(date); track workout.id) {
             <a [routerLink]="['/workouts', workout.id]"
-               class="block px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-primary/10 text-primary hover:bg-primary/20 transition-colors truncate">
+               class="block px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-primary/10 text-primary hover:bg-primary/20 transition-colors truncate text-center">
               {{ workout.name }}
             </a>
           }

@@ -40,7 +40,8 @@
           </a>
           <button (click)="auth.logout()" class="btn-secondary text-xs py-2 px-3">Logout</button>
         } @else {
-          <button (click)="auth.login()" class="btn-primary text-sm py-2 px-5">Get Started</button>
+          <button (click)="auth.login()" class="btn-secondary text-sm py-2 px-5">Sign In</button>
+          <button (click)="auth.register()" class="btn-primary text-sm py-2 px-5">Sign Up</button>
         }
       </div>
 
@@ -85,7 +86,10 @@
           <div class="border-t border-border my-2"></div>
           <button (click)="auth.logout()" class="block w-full text-left px-3 py-2.5 rounded-lg text-error hover:bg-error/10 text-sm font-heading font-semibold uppercase tracking-wider transition-colors cursor-pointer">Logout</button>
         } @else {
-          <button (click)="auth.login()" class="btn-primary w-full">Get Started</button>
+          <div class="space-y-2">
+            <button (click)="auth.login()" class="btn-secondary w-full">Sign In</button>
+            <button (click)="auth.register()" class="btn-primary w-full">Sign Up</button>
+          </div>
         }
       </div>
     </div>
