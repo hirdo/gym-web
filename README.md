@@ -1,6 +1,10 @@
 # GymTrack
 
 <p align="center">
+  <img src="public/favicon.svg" alt="Gym Track Logo" width="120" />
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/badge/Angular-19-dd0031?style=for-the-badge&logo=angular&logoColor=white" alt="Angular" />
   <img src="https://img.shields.io/badge/TypeScript-5.7-3178c6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
   <img src="https://img.shields.io/badge/Tailwind_CSS-4.3-06b6d4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
