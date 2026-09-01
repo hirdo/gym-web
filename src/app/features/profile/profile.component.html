@@ -32,12 +32,14 @@
       <h3 class="text-sm font-heading font-semibold uppercase tracking-wider text-text-muted mb-3">Membership</h3>
       <div class="flex items-center justify-between">
         <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-heading font-bold uppercase tracking-wider"
-              [class]="profile.membershipType === 'elite' ? 'bg-warning/15 text-warning' :
-                       profile.membershipType === 'premium' ? 'bg-primary/15 text-primary' :
+              [class]="membershipService.membership() === 'elite' ? 'bg-warning/15 text-warning' :
+                       membershipService.membership() === 'premium' ? 'bg-primary/15 text-primary' :
                        'bg-accent/15 text-accent'">
-          {{ profile.membershipType || 'Basic' }}
+          {{ membershipService.membership() }}
         </span>
-        <a routerLink="/membership" class="text-primary text-sm font-heading font-semibold uppercase tracking-wider hover:text-primary-light transition-colors">Upgrade</a>
+        <a routerLink="/membership" class="text-primary text-sm font-heading font-semibold uppercase tracking-wider hover:text-primary-light transition-colors">
+          {{ membershipService.membership() === 'elite' ? 'Manage' : 'Upgrade' }}
+        </a>
       </div>
     </div>
 
@@ -55,8 +57,18 @@
         </div>
       </div>
     </div>
+  } @else if (profileService.loaded()) {
+    <!-- Profile failed to load -->
+    <div class="gym-card text-center py-12 mb-5">
+      <div class="w-16 h-16 bg-surface-light rounded-2xl flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+      </div>
+      <p class="text-text font-heading font-semibold text-lg uppercase tracking-wide mb-2">Could not load profile</p>
+      <p class="text-text-muted text-sm">Make sure Keycloak is running and try refreshing the page.</p>
+    </div>
   } @else {
-    <div class="gym-card text-center py-12">
+    <!-- Loading -->
+    <div class="gym-card text-center py-12 mb-5">
       <div class="w-12 h-12 mx-auto mb-3">
         <div class="w-12 h-12 border-4 border-surface-light border-t-primary rounded-full animate-spin"></div>
       </div>

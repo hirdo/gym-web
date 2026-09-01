@@ -6,6 +6,9 @@ import { UserProfile } from '../models/user-profile.model';
 export class ProfileService {
   private readonly auth = inject(AuthService);
 
+  readonly loaded = computed(() => this.auth.profileLoaded());
+  readonly error = computed(() => this.auth.profileError());
+
   readonly profile = computed<UserProfile | null>(() => {
     const kcProfile = this.auth.userProfile();
     if (!kcProfile) return null;
@@ -15,7 +18,6 @@ export class ProfileService {
       email: kcProfile.email || '',
       firstName: kcProfile.firstName || '',
       lastName: kcProfile.lastName || '',
-      membershipType: 'basic',
       joinDate: kcProfile.createdTimestamp
         ? new Date(kcProfile.createdTimestamp).toISOString()
         : undefined

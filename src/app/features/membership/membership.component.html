@@ -38,7 +38,11 @@
           Personal trainer AI
         </li>
       </ul>
-      <div class="text-center text-sm text-text-muted font-heading font-semibold uppercase tracking-wider py-3 border border-border rounded-lg">Current Plan</div>
+      @if (isCurrentPlan('basic')) {
+        <div class="text-center text-sm text-accent font-heading font-semibold uppercase tracking-wider py-3 border border-accent/50 rounded-lg">Current Plan</div>
+      } @else {
+        <button (click)="downgrade()" class="btn-secondary w-full">Downgrade to Basic</button>
+      }
     </div>
 
     <!-- Premium -->
@@ -75,7 +79,13 @@
           Personal trainer AI
         </li>
       </ul>
-      <button class="btn-primary w-full">Upgrade to Premium</button>
+      @if (isCurrentPlan('premium')) {
+        <div class="text-center text-sm text-primary font-heading font-semibold uppercase tracking-wider py-3 border border-primary/50 rounded-lg">Current Plan</div>
+      } @else {
+        <button (click)="upgradeTo('premium')" class="btn-primary w-full">
+          {{ isCurrentPlan('elite') ? 'Switch to Premium' : 'Upgrade to Premium' }}
+        </button>
+      }
     </div>
 
     <!-- Elite -->
@@ -111,7 +121,11 @@
           Early feature access
         </li>
       </ul>
-      <button class="btn-accent w-full">Go Elite</button>
+      @if (isCurrentPlan('elite')) {
+        <div class="text-center text-sm text-warning font-heading font-semibold uppercase tracking-wider py-3 border border-warning/50 rounded-lg">Current Plan</div>
+      } @else {
+        <button (click)="upgradeTo('elite')" class="btn-accent w-full">Go Elite</button>
+      }
     </div>
   </div>
 

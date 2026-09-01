@@ -4,7 +4,7 @@
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
       Back to Workouts
     </a>
-    <h1 class="text-3xl sm:text-4xl font-bold font-heading tracking-wide uppercase">Create Workout</h1>
+    <h1 class="text-3xl sm:text-4xl font-bold font-heading tracking-wide uppercase">{{ isEditMode() ? 'Edit Workout' : 'Create Workout' }}</h1>
   </div>
 
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-6">
@@ -95,7 +95,7 @@
 
     <div class="flex gap-4 pt-2">
       <button type="submit" [disabled]="form.invalid" class="btn-primary flex-1 py-3.5 text-base disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none">
-        Create Workout
+        {{ isEditMode() ? 'Save Changes' : 'Create Workout' }}
       </button>
       <button type="button" (click)="cancel()" class="btn-secondary py-3.5">Cancel</button>
     </div>

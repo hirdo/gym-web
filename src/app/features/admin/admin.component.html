@@ -52,12 +52,13 @@
   @if (activeTab() === 'users') {
     <div class="gym-card overflow-hidden !p-0">
       <div class="overflow-x-auto">
-        <table class="w-full min-w-[640px]">
+        <table class="w-full min-w-[800px]">
           <thead>
             <tr class="border-b border-border">
               <th class="text-left px-5 py-4 text-xs font-semibold text-text-muted uppercase tracking-wider">User</th>
               <th class="text-left px-5 py-4 text-xs font-semibold text-text-muted uppercase tracking-wider">Role</th>
               <th class="text-left px-5 py-4 text-xs font-semibold text-text-muted uppercase tracking-wider">Status</th>
+              <th class="text-left px-5 py-4 text-xs font-semibold text-text-muted uppercase tracking-wider">Membership</th>
               <th class="text-left px-5 py-4 text-xs font-semibold text-text-muted uppercase tracking-wider">Joined</th>
               <th class="text-left px-5 py-4 text-xs font-semibold text-text-muted uppercase tracking-wider">Last Login</th>
               <th class="text-right px-5 py-4 text-xs font-semibold text-text-muted uppercase tracking-wider">Actions</th>
@@ -90,6 +91,30 @@
                           [class]="user.status === 'active' ? 'bg-accent' : 'bg-error'"></span>
                     <span [class]="user.status === 'active' ? 'text-accent' : 'text-error'" class="uppercase tracking-wider">{{ user.status }}</span>
                   </span>
+                </td>
+                <td class="px-5 py-4">
+                  <div class="flex items-center gap-2">
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold uppercase tracking-wider"
+                          [class]="user.membershipType === 'elite' ? 'bg-warning/15 text-warning' :
+                                   user.membershipType === 'premium' ? 'bg-primary/15 text-primary' :
+                                   'bg-surface-light text-text-muted'">
+                      {{ user.membershipType }}
+                    </span>
+                    <select (change)="changeMembership(user.id, $any($event.target).value)"
+                            class="bg-background border border-border rounded-md text-xs px-2 py-1 text-text-muted cursor-pointer focus:border-primary focus:outline-none"
+                            [attr.aria-label]="'Change membership for ' + user.firstName">
+                      <option value="" disabled selected>Change</option>
+                      @if (user.membershipType !== 'basic') {
+                        <option value="basic">Basic</option>
+                      }
+                      @if (user.membershipType !== 'premium') {
+                        <option value="premium">Premium</option>
+                      }
+                      @if (user.membershipType !== 'elite') {
+                        <option value="elite">Elite</option>
+                      }
+                    </select>
+                  </div>
                 </td>
                 <td class="px-5 py-4 text-sm text-text-muted">{{ formatDate(user.joinDate) }}</td>
                 <td class="px-5 py-4 text-sm text-text-muted">{{ formatDateTime(user.lastLogin) }}</td>

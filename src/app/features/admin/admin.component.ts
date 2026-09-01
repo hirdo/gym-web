@@ -1,5 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { AuthService } from '../../core/services/auth.service';
+import { MembershipService, MembershipTier } from '../../core/services/membership.service';
 
 interface MockUser {
   id: string;
@@ -9,6 +10,7 @@ interface MockUser {
   lastName: string;
   role: 'user' | 'admin';
   status: 'active' | 'suspended';
+  membershipType: MembershipTier;
   joinDate: string;
   lastLogin: string;
 }
@@ -22,6 +24,7 @@ interface MockUser {
 })
 export class AdminComponent {
   readonly auth = inject(AuthService);
+  readonly membershipService = inject(MembershipService);
   readonly activeTab = signal<'users' | 'stats'>('users');
 
   readonly users = signal<MockUser[]>([
@@ -33,6 +36,7 @@ export class AdminComponent {
       lastName: 'User',
       role: 'user',
       status: 'active',
+      membershipType: 'basic',
       joinDate: '2025-01-15T00:00:00Z',
       lastLogin: '2026-08-30T14:22:00Z'
     },
@@ -44,6 +48,7 @@ export class AdminComponent {
       lastName: 'User',
       role: 'admin',
       status: 'active',
+      membershipType: 'premium',
       joinDate: '2024-12-01T00:00:00Z',
       lastLogin: '2026-08-31T09:15:00Z'
     },
@@ -55,6 +60,7 @@ export class AdminComponent {
       lastName: 'Smith',
       role: 'user',
       status: 'active',
+      membershipType: 'elite',
       joinDate: '2025-03-10T00:00:00Z',
       lastLogin: '2026-08-28T18:45:00Z'
     },
@@ -66,6 +72,7 @@ export class AdminComponent {
       lastName: 'Johnson',
       role: 'user',
       status: 'suspended',
+      membershipType: 'basic',
       joinDate: '2025-06-20T00:00:00Z',
       lastLogin: '2026-07-15T10:30:00Z'
     },
@@ -77,6 +84,7 @@ export class AdminComponent {
       lastName: 'Williams',
       role: 'user',
       status: 'active',
+      membershipType: 'premium',
       joinDate: '2025-08-05T00:00:00Z',
       lastLogin: '2026-08-31T07:00:00Z'
     }
@@ -112,6 +120,15 @@ export class AdminComponent {
           : u
       )
     );
+  }
+
+  changeMembership(userId: string, tier: MembershipTier): void {
+    this.users.update(users =>
+      users.map(u =>
+        u.id === userId ? { ...u, membershipType: tier } : u
+      )
+    );
+    this.membershipService.setMembershipForUser(userId, tier);
   }
 
   formatDate(dateStr: string): string {
