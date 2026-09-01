@@ -139,8 +139,8 @@ For production, you need a Keycloak server accessible via HTTPS.
 Managed Keycloak-as-a-Service — no Docker, no server management, always online:
 
 1. Sign up at [cloud-iam.com](https://www.cloud-iam.com)
-2. Create a Keycloak instance (free tier: 1 realm, 100 users)
-3. Your instance URL: `https://<your-instance>.cloud-iam.com/auth`
+2. Create a Keycloak instance (free tier: 1 realm, 100 users) For ex: https://console.cloud-iam.com/deployments/f4f50617-4d9e-4aab-91dc-8be86b7d5b4a/summary
+3. Your instance URL: `https://<your-instance>.cloud-iam.com/auth`. 
 4. Create realm and client (Public, OpenID Connect)
 5. Set `KEYCLOAK_URL` in Vercel to your Cloud-IAM URL (with `/auth`)
 
