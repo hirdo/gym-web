@@ -45,12 +45,12 @@ export class FirestoreService {
 
   async setDocument(collectionName: string, docId: string, data: DocumentData, merge = true): Promise<void> {
     if (!this.initialized) return;
-    await setDoc(doc(this.db, collectionName, docId), data, { merge });
+    await setDoc(doc(this.db, collectionName, docId), this.stripUndefined(data), { merge });
   }
 
   async updateDocument(collectionName: string, docId: string, data: DocumentData): Promise<void> {
     if (!this.initialized) return;
-    await updateDoc(doc(this.db, collectionName, docId), data);
+    await updateDoc(doc(this.db, collectionName, docId), this.stripUndefined(data));
   }
 
   async deleteDocument(collectionName: string, docId: string): Promise<void> {
@@ -60,7 +60,7 @@ export class FirestoreService {
 
   async addDocument(collectionName: string, data: DocumentData): Promise<string> {
     if (!this.initialized) return '';
-    const ref = await addDoc(collection(this.db, collectionName), data);
+    const ref = await addDoc(collection(this.db, collectionName), this.stripUndefined(data));
     return ref.id;
   }
 
@@ -81,6 +81,25 @@ export class FirestoreService {
     return onSnapshot(q, snap => {
       callback(snap.docs.map(d => ({ id: d.id, ...d.data() } as T)));
     });
+  }
+
+  private stripUndefined(data: DocumentData): DocumentData {
+    const clean: DocumentData = {};
+    for (const [key, value] of Object.entries(data)) {
+      if (value === undefined) continue;
+      if (Array.isArray(value)) {
+        clean[key] = value.map(item =>
+          item && typeof item === 'object' && !Array.isArray(item)
+            ? this.stripUndefined(item)
+            : item
+        );
+      } else if (value && typeof value === 'object') {
+        clean[key] = this.stripUndefined(value);
+      } else {
+        clean[key] = value;
+      }
+    }
+    return clean;
   }
 
   where = where;
