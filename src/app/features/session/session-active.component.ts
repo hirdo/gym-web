@@ -6,6 +6,7 @@ import { WorkoutSessionService } from '../../core/services/workout-session.servi
 import { WorkoutService } from '../../core/services/workout.service';
 import { SetRecord } from '../../core/models/workout.model';
 import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner.component';
+import { parseLocalDate } from '../../core/utils/date.util';
 
 @Component({
   selector: 'app-session-active',
@@ -134,8 +135,8 @@ export class SessionActiveComponent implements OnDestroy {
     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   }
 
-  formatHistoryDate(iso: string): string {
-    return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  formatHistoryDate(dateStr: string): string {
+    return parseLocalDate(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   }
 
   skipRest(): void {

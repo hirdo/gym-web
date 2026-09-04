@@ -3,6 +3,7 @@ import { WorkoutSession, ExerciseSession, SetRecord } from '../models/workout.mo
 import { AuthService } from './auth.service';
 import { FirestoreService } from './firestore.service';
 import { WorkoutService } from './workout.service';
+import { toLocalDateString } from '../utils/date.util';
 import { where, orderBy, Unsubscribe } from 'firebase/firestore';
 
 @Injectable({ providedIn: 'root' })
@@ -168,17 +169,23 @@ export class WorkoutSessionService implements OnDestroy {
     await this.firestore.deleteDocument(this.COLLECTION, sessionId);
   }
 
+  async deleteSessionsForWorkout(workoutId: string): Promise<void> {
+    const sessions = this.sessions().filter(s => s.workoutId === workoutId);
+    for (const s of sessions) {
+      await this.deleteSession(s.id);
+    }
+  }
+
   getExerciseHistory(exerciseName: string): { date: string; sets: SetRecord[] }[] {
     return this.completedSessions()
       .filter(s => s.exercises.some(e => e.exerciseName === exerciseName))
-      .sort((a, b) => (b.completedAt || '').localeCompare(a.completedAt || ''))
       .map(s => {
         const exercise = s.exercises.find(e => e.exerciseName === exerciseName)!;
-        return {
-          date: s.completedAt!,
-          sets: exercise.sets
-        };
-      });
+        const workout = s.workoutId ? this.workoutService.getById(s.workoutId) : undefined;
+        const date = workout?.scheduledDate || toLocalDateString(new Date(s.completedAt!));
+        return { date, sets: exercise.sets };
+      })
+      .sort((a, b) => b.date.localeCompare(a.date));
   }
 
   getSessionsForWorkout(workoutId: string): WorkoutSession[] {
