@@ -35,7 +35,7 @@
           <svg class="w-4 h-4 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
         </div>
       </div>
-      <p class="text-3xl sm:text-4xl font-heading font-extrabold text-warning">0</p>
+      <p class="text-3xl sm:text-4xl font-heading font-extrabold text-warning">{{ sessionService.thisWeekCount() }}</p>
     </div>
     <div class="gym-card group hover:border-primary-light/30">
       <div class="flex items-center justify-between mb-3">
@@ -44,14 +44,35 @@
           <svg class="w-4 h-4 text-primary-light" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/></svg>
         </div>
       </div>
-      <p class="text-3xl sm:text-4xl font-heading font-extrabold text-primary-light">0 <span class="text-base font-body font-normal text-text-muted">days</span></p>
+      <p class="text-3xl sm:text-4xl font-heading font-extrabold text-primary-light">{{ sessionService.streak() }} <span class="text-base font-body font-normal text-text-muted">days</span></p>
     </div>
   </div>
+
+  <!-- Active Program -->
+  @if (programService.activeProgram(); as program) {
+    <div class="gym-card mb-10 border-primary/30">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-lg font-heading font-bold uppercase tracking-wider">Active Program</h2>
+        <a [routerLink]="['/programs', program.id]" class="text-primary text-sm font-heading font-semibold uppercase tracking-wider hover:text-primary-light transition-colors">View</a>
+      </div>
+      <h3 class="text-xl font-heading font-bold">{{ program.name }}</h3>
+      <div class="flex items-center gap-4 mt-2 text-sm text-text-muted">
+        <span>Day {{ (program.currentDay || 0) + 1 }}/{{ program.totalDays }}</span>
+        <span>&middot;</span>
+        <span>{{ program.sessionsPerWeek }}x/week</span>
+        <span>&middot;</span>
+        <span class="capitalize">{{ program.difficulty }}</span>
+      </div>
+      <div class="mt-3 bg-background rounded-full h-2 overflow-hidden">
+        <div class="bg-primary h-full rounded-full transition-all" [style.width.%]="program.totalDays > 0 ? ((program.currentDay || 0) / program.totalDays * 100) : 0"></div>
+      </div>
+    </div>
+  }
 
   <!-- Quick Actions -->
   <div class="mb-10">
     <h2 class="text-lg font-heading font-bold uppercase tracking-wider mb-4">Quick Actions</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
       <a routerLink="/workouts/new" class="gym-card flex items-center gap-4 hover:border-primary/40 transition-all cursor-pointer group">
         <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
           <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -85,6 +106,18 @@
         <div>
           <h3 class="font-heading font-semibold uppercase tracking-wide text-sm">Schedule</h3>
           <p class="text-text-muted text-xs mt-0.5">Plan your training week</p>
+        </div>
+      </a>
+
+      <a routerLink="/programs" class="gym-card flex items-center gap-4 hover:border-primary-light/40 transition-all cursor-pointer group">
+        <div class="w-12 h-12 bg-primary-light/10 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-primary-light/20 transition-colors">
+          <svg class="w-6 h-6 text-primary-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+          </svg>
+        </div>
+        <div>
+          <h3 class="font-heading font-semibold uppercase tracking-wide text-sm">Programs</h3>
+          <p class="text-text-muted text-xs mt-0.5">Training plans & progress</p>
         </div>
       </a>
     </div>

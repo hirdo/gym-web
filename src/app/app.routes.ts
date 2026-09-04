@@ -52,6 +52,80 @@ export const routes: Routes = [
     ]
   },
   {
+    path: 'exercises',
+    canActivate: [canActivateAuth],
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./features/exercises/exercise-list.component').then(
+            (m) => m.ExerciseListComponent
+          )
+      },
+      {
+        path: 'new',
+        loadComponent: () =>
+          import('./features/exercises/exercise-create.component').then(
+            (m) => m.ExerciseCreateComponent
+          )
+      },
+      {
+        path: ':id',
+        loadComponent: () =>
+          import('./features/exercises/exercise-detail.component').then(
+            (m) => m.ExerciseDetailComponent
+          )
+      }
+    ]
+  },
+  {
+    path: 'programs',
+    canActivate: [canActivateAuth],
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./features/programs/program-list.component').then(
+            (m) => m.ProgramListComponent
+          )
+      },
+      {
+        path: 'new',
+        loadComponent: () =>
+          import('./features/programs/program-create.component').then(
+            (m) => m.ProgramCreateComponent
+          )
+      },
+      {
+        path: ':id',
+        loadComponent: () =>
+          import('./features/programs/program-detail.component').then(
+            (m) => m.ProgramDetailComponent
+          )
+      }
+    ]
+  },
+  {
+    path: 'session',
+    canActivate: [canActivateAuth],
+    children: [
+      {
+        path: 'history',
+        loadComponent: () =>
+          import('./features/session/session-history.component').then(
+            (m) => m.SessionHistoryComponent
+          )
+      },
+      {
+        path: ':id',
+        loadComponent: () =>
+          import('./features/session/session-active.component').then(
+            (m) => m.SessionActiveComponent
+          )
+      }
+    ]
+  },
+  {
     path: 'schedule',
     loadComponent: () =>
       import('./features/schedule/schedule.component').then(

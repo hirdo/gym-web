@@ -1,0 +1,42 @@
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="text-3xl sm:text-4xl font-heading font-bold uppercase tracking-wide">Session History</h1>
+      <p class="text-text-muted mt-1">Your completed workout sessions</p>
+    </div>
+    <a routerLink="/dashboard" class="btn-secondary text-sm py-2 px-4">Dashboard</a>
+  </div>
+
+  @if (sessionService.completedSessions().length === 0) {
+    <div class="gym-card text-center py-16">
+      <div class="w-16 h-16 bg-surface-light rounded-2xl flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      </div>
+      <p class="text-text-muted mb-4">No completed sessions yet</p>
+      <a routerLink="/workouts" class="btn-primary">Start a Workout</a>
+    </div>
+  } @else {
+    <div class="space-y-3">
+      @for (session of sessionService.recentSessions(); track session.id) {
+        <a [routerLink]="['/session', session.id]" class="gym-card flex items-center justify-between hover:border-primary/30 transition-colors group block">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center shrink-0">
+              <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <div>
+              <h3 class="font-heading font-semibold text-sm uppercase tracking-wide group-hover:text-primary transition-colors">{{ session.name }}</h3>
+              <p class="text-text-muted text-xs mt-0.5">
+                {{ formatDate(session.completedAt!) }}
+                &middot; {{ session.exercises.length }} exercises
+                &middot; {{ totalSets(session.exercises) }} sets
+              </p>
+            </div>
+          </div>
+          <div class="text-right shrink-0">
+            <p class="font-heading font-bold text-sm text-primary">{{ formatDuration(session.durationSeconds) }}</p>
+          </div>
+        </a>
+      }
+    </div>
+  }
+</div>
