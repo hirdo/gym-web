@@ -1,0 +1,66 @@
+<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+  <a routerLink="/exercises" class="text-text-muted hover:text-primary text-sm inline-flex items-center gap-1 transition-colors mb-6">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+    Back to Library
+  </a>
+
+  <h1 class="text-3xl font-heading font-bold uppercase tracking-wide mb-8">Add Exercise</h1>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-6">
+    <div class="gym-card space-y-5">
+      <div>
+        <label class="block text-xs text-text-muted font-semibold uppercase tracking-wider mb-1.5">Exercise Name</label>
+        <input type="text" formControlName="name" placeholder="e.g. Bench Press"
+               class="w-full bg-background border border-border rounded-lg px-3 py-2.5 text-text focus:border-primary focus:outline-none transition-colors">
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs text-text-muted font-semibold uppercase tracking-wider mb-1.5">Category</label>
+          <select formControlName="category"
+                  class="w-full bg-background border border-border rounded-lg px-3 py-2.5 text-text focus:border-primary focus:outline-none transition-colors">
+            @for (cat of categories; track cat) {
+              <option [value]="cat">{{ cat | titlecase }}</option>
+            }
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs text-text-muted font-semibold uppercase tracking-wider mb-1.5">Equipment</label>
+          <select formControlName="equipment"
+                  class="w-full bg-background border border-border rounded-lg px-3 py-2.5 text-text focus:border-primary focus:outline-none transition-colors">
+            @for (equip of equipmentList; track equip) {
+              <option [value]="equip">{{ equip | titlecase }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-xs text-text-muted font-semibold uppercase tracking-wider mb-1.5">Primary Muscles <span class="text-error">*</span></label>
+        <div class="flex flex-wrap gap-2">
+          @for (muscle of muscleGroups; track muscle) {
+            <button type="button" (click)="toggleMuscle(muscle)"
+                    class="px-3 py-1.5 text-xs font-semibold rounded-lg uppercase tracking-wider transition-colors"
+                    [class]="selectedMuscles.has(muscle) ? 'bg-primary text-background' : 'bg-background text-text-muted hover:text-text border border-border'">
+              {{ muscle }}
+            </button>
+          }
+        </div>
+        @if (selectedMuscles.size === 0) {
+          <p class="text-xs text-text-muted mt-1.5">Select at least one muscle group</p>
+        }
+      </div>
+
+      <div>
+        <label class="block text-xs text-text-muted font-semibold uppercase tracking-wider mb-1.5">Instructions (optional)</label>
+        <textarea formControlName="instructions" rows="4" placeholder="Form tips, technique notes..."
+                  class="w-full bg-background border border-border rounded-lg px-3 py-2.5 text-text focus:border-primary focus:outline-none transition-colors resize-none"></textarea>
+      </div>
+    </div>
+
+    <div class="flex gap-3">
+      <button type="submit" class="btn-primary flex-1 py-3" [disabled]="form.invalid || selectedMuscles.size === 0">Add Exercise</button>
+      <a routerLink="/exercises" class="btn-secondary py-3 px-6">Cancel</a>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,84 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+    <div>
+      <h1 class="text-3xl sm:text-4xl font-heading font-bold uppercase tracking-wide">Exercise Library</h1>
+      <p class="text-text-muted mt-1">{{ filteredExercises().length }} exercises</p>
+    </div>
+    <a routerLink="/exercises/new" class="btn-primary text-sm py-2 px-4 shrink-0">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      Add Exercise
+    </a>
+  </div>
+
+  <!-- Filters -->
+  <div class="gym-card mb-8">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div>
+        <label class="block text-xs text-text-muted font-semibold uppercase tracking-wider mb-1.5">Search</label>
+        <input type="text" [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)"
+               placeholder="Search exercises..."
+               class="w-full bg-background border border-border rounded-lg px-3 py-2.5 text-text text-sm focus:border-primary focus:outline-none transition-colors">
+      </div>
+      <div>
+        <label class="block text-xs text-text-muted font-semibold uppercase tracking-wider mb-1.5">Muscle Group</label>
+        <select [ngModel]="selectedMuscle()" (ngModelChange)="selectedMuscle.set($event)"
+                class="w-full bg-background border border-border rounded-lg px-3 py-2.5 text-text text-sm focus:border-primary focus:outline-none transition-colors">
+          <option value="">All Muscles</option>
+          @for (muscle of allMuscleGroups; track muscle) {
+            <option [value]="muscle">{{ muscle | titlecase }}</option>
+          }
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs text-text-muted font-semibold uppercase tracking-wider mb-1.5">Equipment</label>
+        <select [ngModel]="selectedEquipment()" (ngModelChange)="selectedEquipment.set($event)"
+                class="w-full bg-background border border-border rounded-lg px-3 py-2.5 text-text text-sm focus:border-primary focus:outline-none transition-colors">
+          <option value="">All Equipment</option>
+          @for (equip of allEquipment; track equip) {
+            <option [value]="equip">{{ equip | titlecase }}</option>
+          }
+        </select>
+      </div>
+    </div>
+    @if (searchQuery() || selectedMuscle() || selectedEquipment()) {
+      <button (click)="clearFilters()" class="mt-3 text-sm text-text-muted hover:text-primary transition-colors">Clear filters</button>
+    }
+  </div>
+
+  <!-- Exercise Grid -->
+  @if (filteredExercises().length === 0) {
+    <div class="gym-card text-center py-16">
+      <div class="w-16 h-16 bg-surface-light rounded-2xl flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      </div>
+      @if (exerciseService.exercises().length === 0) {
+        <p class="text-text-muted mb-4">No exercises in the library yet</p>
+        <a routerLink="/exercises/new" class="btn-primary">Add Your First Exercise</a>
+      } @else {
+        <p class="text-text-muted">No exercises match your filters</p>
+      }
+    </div>
+  } @else {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      @for (exercise of filteredExercises(); track exercise.id) {
+        <a [routerLink]="['/exercises', exercise.id]" class="gym-card hover:border-primary/30 transition-colors group">
+          <h3 class="font-heading font-semibold uppercase tracking-wide text-sm group-hover:text-primary transition-colors mb-2">{{ exercise.name }}</h3>
+          <div class="flex flex-wrap gap-1.5 mb-3">
+            @for (muscle of exercise.primaryMuscles; track muscle) {
+              <span class="inline-flex items-center px-2 py-0.5 text-[10px] font-semibold rounded uppercase tracking-wider bg-primary/10 text-primary">{{ muscle }}</span>
+            }
+          </div>
+          <div class="flex items-center gap-3 text-xs text-text-muted">
+            <span class="capitalize">{{ exercise.equipment }}</span>
+            <span>&middot;</span>
+            <span class="capitalize">{{ exercise.category }}</span>
+            @if (exercise.isCustom) {
+              <span>&middot;</span>
+              <span class="text-warning">Custom</span>
+            }
+          </div>
+        </a>
+      }
+    </div>
+  }
+</div>

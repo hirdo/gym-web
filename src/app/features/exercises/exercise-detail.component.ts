@@ -1,0 +1,56 @@
+import { Component, inject, computed } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ExerciseLibraryService } from '../../core/services/exercise-library.service';
+import { WorkoutSessionService } from '../../core/services/workout-session.service';
+
+@Component({
+  selector: 'app-exercise-detail',
+  standalone: true,
+  imports: [RouterLink],
+  templateUrl: './exercise-detail.component.html',
+  styleUrl: './exercise-detail.component.scss'
+})
+export class ExerciseDetailComponent {
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly exerciseService = inject(ExerciseLibraryService);
+  private readonly sessionService = inject(WorkoutSessionService);
+
+  readonly exercise = computed(() => {
+    const id = this.route.snapshot.paramMap.get('id');
+    return id ? this.exerciseService.getById(id) : undefined;
+  });
+
+  readonly history = computed(() => {
+    const ex = this.exercise();
+    if (!ex) return [];
+    return this.sessionService.getExerciseHistory(ex.name).slice(0, 10);
+  });
+
+  readonly alternatives = computed(() => {
+    const ex = this.exercise();
+    if (!ex) return [];
+    return this.exerciseService.getAlternatives(ex.id).slice(0, 6);
+  });
+
+  readonly lastWeight = computed(() => {
+    const ex = this.exercise();
+    if (!ex) return undefined;
+    return this.sessionService.getLastWeight(ex.name);
+  });
+
+  formatDate(iso: string): string {
+    return new Date(iso).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric'
+    });
+  }
+
+  async deleteExercise(): Promise<void> {
+    const ex = this.exercise();
+    if (ex) {
+      await this.exerciseService.deleteExercise(ex.id);
+      this.router.navigate(['/exercises']);
+    }
+  }
+}
