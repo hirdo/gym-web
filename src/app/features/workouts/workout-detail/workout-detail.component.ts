@@ -2,6 +2,7 @@ import { Component, inject, computed } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { WorkoutService } from '../../../core/services/workout.service';
 import { WorkoutSessionService } from '../../../core/services/workout-session.service';
+import { SetRecord } from '../../../core/models/workout.model';
 
 @Component({
   selector: 'app-workout-detail',
@@ -43,6 +44,17 @@ export class WorkoutDetailComponent {
 
   totalSets(exercises: { sets: unknown[] }[]): number {
     return exercises.reduce((sum, e) => sum + e.sets.length, 0);
+  }
+
+  formatTime(iso: string): string {
+    return new Date(iso).toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+  sortedSets(sets: SetRecord[]): SetRecord[] {
+    return [...sets].sort((a, b) => b.completedAt.localeCompare(a.completedAt));
   }
 
   async startSession(): Promise<void> {

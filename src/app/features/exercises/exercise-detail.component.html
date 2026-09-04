@@ -11,12 +11,9 @@
           <div class="flex items-center gap-3 mt-3">
             <span class="inline-flex items-center px-3 py-1 text-xs font-semibold rounded-md uppercase tracking-wider bg-primary/10 text-primary">{{ ex.category }}</span>
             <span class="inline-flex items-center px-3 py-1 text-xs font-semibold rounded-md uppercase tracking-wider bg-surface-light text-text-muted capitalize">{{ ex.equipment }}</span>
-            @if (ex.isCustom) {
-              <span class="inline-flex items-center px-3 py-1 text-xs font-semibold rounded-md uppercase tracking-wider bg-warning/10 text-warning">Custom</span>
-            }
           </div>
         </div>
-        @if (ex.isCustom && auth.isAdmin()) {
+        @if (auth.isAdmin()) {
           <button (click)="deleteExercise()" class="btn-secondary text-sm py-2 px-4 hover:!text-error hover:!border-error/50 shrink-0">Delete</button>
         }
       </div>
