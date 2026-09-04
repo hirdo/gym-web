@@ -14,7 +14,7 @@ export class ScheduleComponent {
   private readonly workoutService = inject(WorkoutService);
 
   readonly weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-  readonly viewMode = signal<'week' | 'month'>('week');
+  readonly viewMode = signal<'week' | 'month'>('month');
   readonly currentWeekStart = signal(this.getMonday(new Date()));
   readonly currentMonthStart = signal(this.getMonthStart(new Date()));
 
