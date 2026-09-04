@@ -44,10 +44,7 @@ export class WorkoutDetailComponent {
   async deleteWorkout(): Promise<void> {
     const w = this.workout();
     if (w) {
-      const sessions = this.sessionService.sessions().filter(s => s.workoutId === w.id);
-      for (const s of sessions) {
-        await this.sessionService.deleteSession(s.id);
-      }
+      await this.sessionService.deleteSessionsForWorkout(w.id);
       await this.workoutService.delete(w.id);
       this.router.navigate(['/workouts']);
     }

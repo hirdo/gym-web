@@ -3,6 +3,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ExerciseLibraryService } from '../../core/services/exercise-library.service';
 import { WorkoutSessionService } from '../../core/services/workout-session.service';
 import { AuthService } from '../../core/services/auth.service';
+import { parseLocalDate } from '../../core/utils/date.util';
 
 @Component({
   selector: 'app-exercise-detail',
@@ -41,8 +42,8 @@ export class ExerciseDetailComponent {
     return this.sessionService.getLastWeight(ex.name);
   });
 
-  formatDate(iso: string): string {
-    return new Date(iso).toLocaleDateString('en-US', {
+  formatDate(dateStr: string): string {
+    return parseLocalDate(dateStr).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric'
     });
