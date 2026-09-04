@@ -27,13 +27,6 @@ export class WorkoutDetailComponent {
     return w ? this.sessionService.getSessionsForWorkout(w.id) : [];
   });
 
-  formatDuration(seconds?: number): string {
-    if (!seconds) return '--';
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `${m}m ${s}s`;
-  }
-
   formatDate(iso: string): string {
     return new Date(iso).toLocaleDateString('en-US', {
       weekday: 'short',
@@ -42,19 +35,8 @@ export class WorkoutDetailComponent {
     });
   }
 
-  totalSets(exercises: { sets: unknown[] }[]): number {
-    return exercises.reduce((sum, e) => sum + e.sets.length, 0);
-  }
-
-  formatTime(iso: string): string {
-    return new Date(iso).toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  }
-
-  sortedSets(sets: SetRecord[]): SetRecord[] {
-    return [...sets].sort((a, b) => b.completedAt.localeCompare(a.completedAt));
+  exerciseHistory(exerciseName: string): { date: string; sets: SetRecord[] }[] {
+    return this.sessionService.getExerciseHistory(exerciseName).slice(0, 5);
   }
 
   async startSession(): Promise<void> {
