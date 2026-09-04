@@ -4,7 +4,7 @@
     Back to Library
   </a>
 
-  <h1 class="text-3xl font-heading font-bold uppercase tracking-wide mb-8">Add Exercise</h1>
+  <h1 class="text-3xl font-heading font-bold uppercase tracking-wide mb-8">{{ isEditMode() ? 'Edit Exercise' : 'Add Exercise' }}</h1>
 
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-6">
     <div class="gym-card space-y-5">
@@ -12,6 +12,18 @@
         <label class="block text-xs text-text-muted font-semibold uppercase tracking-wider mb-1.5">Exercise Name</label>
         <input type="text" formControlName="name" placeholder="e.g. Bench Press"
                class="w-full bg-background border border-border rounded-lg px-3 py-2.5 text-text focus:border-primary focus:outline-none transition-colors">
+      </div>
+
+      <div>
+        <label class="block text-xs text-text-muted font-semibold uppercase tracking-wider mb-1.5">Image (optional)</label>
+        @if (imagePreviewUrl(); as preview) {
+          <img [src]="preview" alt="Exercise preview" class="w-full h-40 object-cover rounded-lg mb-2 border border-border">
+        }
+        <input type="file" accept="image/*" (change)="onFileSelected($event)"
+               class="w-full bg-background border border-border rounded-lg px-3 py-2.5 text-text text-sm file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:bg-primary/10 file:text-primary file:text-xs file:font-semibold file:uppercase file:tracking-wider file:cursor-pointer cursor-pointer">
+        @if (uploadError()) {
+          <p class="text-xs text-error mt-1.5">{{ uploadError() }}</p>
+        }
       </div>
 
       <div class="grid grid-cols-2 gap-4">
@@ -59,7 +71,13 @@
     </div>
 
     <div class="flex gap-3">
-      <button type="submit" class="btn-primary flex-1 py-3" [disabled]="form.invalid || selectedMuscles.size === 0">Add Exercise</button>
+      <button type="submit" class="btn-primary flex-1 py-3" [disabled]="form.invalid || selectedMuscles.size === 0 || uploading()">
+        @if (uploading()) {
+          Uploading...
+        } @else {
+          {{ isEditMode() ? 'Save Changes' : 'Add Exercise' }}
+        }
+      </button>
       <a routerLink="/exercises" class="btn-secondary py-3 px-6">Cancel</a>
     </div>
   </form>

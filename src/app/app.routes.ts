@@ -71,6 +71,14 @@ export const routes: Routes = [
         data: { roles: ['admin'] }
       },
       {
+        path: ':id/edit',
+        loadComponent: () =>
+          import('./features/exercises/exercise-create.component').then(
+            (m) => m.ExerciseCreateComponent
+          ),
+        data: { roles: ['admin'] }
+      },
+      {
         path: ':id',
         loadComponent: () =>
           import('./features/exercises/exercise-detail.component').then(
@@ -92,6 +100,14 @@ export const routes: Routes = [
       },
       {
         path: 'new',
+        loadComponent: () =>
+          import('./features/programs/program-create.component').then(
+            (m) => m.ProgramCreateComponent
+          ),
+        data: { roles: ['admin'] }
+      },
+      {
+        path: ':id/edit',
         loadComponent: () =>
           import('./features/programs/program-create.component').then(
             (m) => m.ProgramCreateComponent

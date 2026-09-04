@@ -1,13 +1,16 @@
 import { Component, inject, computed, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { ProgramService } from '../../core/services/program.service';
 import { WorkoutSessionService } from '../../core/services/workout-session.service';
+import { WorkoutService } from '../../core/services/workout.service';
 import { AuthService } from '../../core/services/auth.service';
+import { toLocalDateString } from '../../core/utils/date.util';
 
 @Component({
   selector: 'app-program-detail',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, FormsModule],
   templateUrl: './program-detail.component.html',
   styleUrl: './program-detail.component.scss'
 })
@@ -16,9 +19,12 @@ export class ProgramDetailComponent {
   private readonly router = inject(Router);
   private readonly programService = inject(ProgramService);
   private readonly sessionService = inject(WorkoutSessionService);
+  private readonly workoutService = inject(WorkoutService);
   readonly auth = inject(AuthService);
 
   readonly applying = signal(false);
+  readonly startDate = signal(toLocalDateString(new Date()));
+  readonly conflictDates = signal<string[] | null>(null);
 
   readonly program = computed(() => {
     const id = this.route.snapshot.paramMap.get('id');
@@ -46,13 +52,28 @@ export class ProgramDetailComponent {
   async applyProgram(): Promise<void> {
     const p = this.program();
     if (!p || this.applying()) return;
+
+    const dates = this.programService.calculateConsecutiveDates(this.startDate(), p.days.length);
+    const conflicts = this.workoutService.getWorkoutsOnDates(dates)
+      .map(w => w.scheduledDate!)
+      .filter((d): d is string => !!d);
+
+    if (conflicts.length > 0) {
+      this.conflictDates.set(conflicts);
+      return;
+    }
+
     this.applying.set(true);
     try {
-      await this.programService.applyProgram(p.id);
+      await this.programService.applyProgram(p.id, this.startDate());
       this.router.navigate(['/schedule']);
     } finally {
       this.applying.set(false);
     }
+  }
+
+  closeConflictWarning(): void {
+    this.conflictDates.set(null);
   }
 
   async startDay(): Promise<void> {

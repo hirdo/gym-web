@@ -125,10 +125,24 @@ Set these environment variables in Vercel project settings:
 | `FIREBASE_STORAGE_BUCKET` | Firebase storage bucket |
 | `FIREBASE_MESSAGING_SENDER_ID` | Firebase messaging sender ID |
 | `FIREBASE_APP_ID` | Firebase app ID |
+| `CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name (for exercise image uploads) |
+| `CLOUDINARY_UPLOAD_PRESET` | Cloudinary unsigned upload preset name |
 
 The build command `npm run build:vercel` runs `scripts/set-env.js` to inject these into the production environment at build time.
 
 > **Note:** Cloud-IAM uses the `/auth` path prefix — set `KEYCLOAK_URL` to `https://<instance>.cloud-iam.com/auth`
+
+## Cloudinary Setup (exercise images)
+
+Exercise image uploads use [Cloudinary](https://cloudinary.com)'s free tier (25GB storage + 25GB bandwidth/month, no card required) instead of Firebase Storage, since Firebase Storage now requires the paid Blaze plan. Uploads go directly from the browser to Cloudinary via an "unsigned upload preset" — no backend or secret key needed.
+
+1. Sign up free at [cloudinary.com](https://cloudinary.com).
+2. Copy the **Cloud name** shown on your dashboard.
+3. Go to **Settings → Upload → Upload presets → Add upload preset**, set **Signing Mode** to **Unsigned**, save, and copy the preset name.
+4. For local dev, put both values directly into `src/environments/environment.ts` under `cloudinary: { cloudName, uploadPreset }`.
+5. For production, set `CLOUDINARY_CLOUD_NAME` and `CLOUDINARY_UPLOAD_PRESET` in Vercel project settings (same place as the `FIREBASE_*` vars above).
+
+Both values are safe to embed in client code — an unsigned preset never exposes your Cloudinary API secret.
 
 ## Keycloak Production Setup
 

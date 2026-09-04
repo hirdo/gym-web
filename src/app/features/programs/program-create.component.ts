@@ -1,5 +1,5 @@
-import { Component, inject, signal } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Component, inject, signal, OnInit } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormArray, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { ProgramService } from '../../core/services/program.service';
 import { ExerciseLibraryService } from '../../core/services/exercise-library.service';
@@ -13,9 +13,10 @@ import { ProgramDifficulty, ExerciseTemplate } from '../../core/models/workout.m
   templateUrl: './program-create.component.html',
   styleUrl: './program-create.component.scss'
 })
-export class ProgramCreateComponent {
+export class ProgramCreateComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly programService = inject(ProgramService);
   readonly exerciseService = inject(ExerciseLibraryService);
 
@@ -28,6 +29,9 @@ export class ProgramCreateComponent {
   readonly pickerOpen = signal(false);
   private pickerTarget: { dayIndex: number; exerciseIndex: number } | null = null;
 
+  readonly isEditMode = signal(false);
+  private editId: string | null = null;
+
   readonly form = this.fb.group({
     name: ['', Validators.required],
     description: [''],
@@ -38,6 +42,47 @@ export class ProgramCreateComponent {
 
   get days(): FormArray {
     return this.form.get('days') as FormArray;
+  }
+
+  ngOnInit(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (!id) return;
+
+    const program = this.programService.getById(id);
+    if (!program) {
+      this.router.navigate(['/programs']);
+      return;
+    }
+
+    this.isEditMode.set(true);
+    this.editId = id;
+    this.form.patchValue({
+      name: program.name,
+      description: program.description || '',
+      difficulty: program.difficulty,
+      sessionsPerWeek: program.sessionsPerWeek
+    });
+
+    this.days.clear();
+    for (const day of program.days) {
+      const dayGroup = this.createDayGroup(day.dayNumber);
+      dayGroup.patchValue({ name: day.name });
+      const exercises = dayGroup.get('exercises') as FormArray;
+      exercises.clear();
+      for (const ex of day.exercises) {
+        const exGroup = this.createExerciseGroup();
+        exGroup.patchValue({
+          exerciseId: ex.exerciseId,
+          exerciseName: ex.exerciseName,
+          targetSets: ex.targetSets,
+          targetReps: ex.targetReps,
+          targetWeight: ex.targetWeight ?? null,
+          restTime: ex.restTime ?? null
+        });
+        exercises.push(exGroup);
+      }
+      this.days.push(dayGroup);
+    }
   }
 
   getDayExercises(dayIndex: number): FormArray {
@@ -127,18 +172,29 @@ export class ProgramCreateComponent {
       };
     });
 
-    const program = await this.programService.create({
-      name: value.name!,
-      description: value.description || undefined,
-      difficulty: value.difficulty!,
-      totalDays: days.length,
-      sessionsPerWeek: value.sessionsPerWeek!,
-      days,
-      isActive: false,
-      currentDay: 0,
-      completedSessions: 0
-    });
-
-    this.router.navigate(['/programs', program.id]);
+    if (this.isEditMode() && this.editId) {
+      await this.programService.update(this.editId, {
+        name: value.name!,
+        description: value.description || undefined,
+        difficulty: value.difficulty!,
+        totalDays: days.length,
+        sessionsPerWeek: value.sessionsPerWeek!,
+        days
+      });
+      this.router.navigate(['/programs', this.editId]);
+    } else {
+      const program = await this.programService.create({
+        name: value.name!,
+        description: value.description || undefined,
+        difficulty: value.difficulty!,
+        totalDays: days.length,
+        sessionsPerWeek: value.sessionsPerWeek!,
+        days,
+        isActive: false,
+        currentDay: 0,
+        completedSessions: 0
+      });
+      this.router.navigate(['/programs', program.id]);
+    }
   }
 }
