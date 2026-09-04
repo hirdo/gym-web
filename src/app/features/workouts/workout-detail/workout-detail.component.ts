@@ -2,7 +2,6 @@ import { Component, inject, computed } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { WorkoutService } from '../../../core/services/workout.service';
 import { WorkoutSessionService } from '../../../core/services/workout-session.service';
-import { SetRecord } from '../../../core/models/workout.model';
 
 @Component({
   selector: 'app-workout-detail',
@@ -27,18 +26,6 @@ export class WorkoutDetailComponent {
     return w ? this.sessionService.getSessionsForWorkout(w.id) : [];
   });
 
-  formatDate(iso: string): string {
-    return new Date(iso).toLocaleDateString('en-US', {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric'
-    });
-  }
-
-  exerciseHistory(exerciseName: string): { date: string; sets: SetRecord[] }[] {
-    return this.sessionService.getExerciseHistory(exerciseName).slice(0, 5);
-  }
-
   async startSession(): Promise<void> {
     const w = this.workout();
     if (w) {
@@ -57,6 +44,10 @@ export class WorkoutDetailComponent {
   async deleteWorkout(): Promise<void> {
     const w = this.workout();
     if (w) {
+      const sessions = this.sessionService.sessions().filter(s => s.workoutId === w.id);
+      for (const s of sessions) {
+        await this.sessionService.deleteSession(s.id);
+      }
       await this.workoutService.delete(w.id);
       this.router.navigate(['/workouts']);
     }

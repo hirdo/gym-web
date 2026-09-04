@@ -47,6 +47,11 @@ export class SessionActiveComponent implements OnDestroy {
     return s ? s.exercises.some(e => e.sets.length > 0) : false;
   });
 
+  readonly currentExerciseHistory = computed(() => {
+    const ex = this.currentExercise();
+    return ex ? this.sessionService.getExerciseHistory(ex.exerciseName).slice(0, 5) : [];
+  });
+
   readonly overallProgress = computed(() => {
     const s = this.session();
     if (!s) return 0;
@@ -127,6 +132,10 @@ export class SessionActiveComponent implements OnDestroy {
     const m = Math.floor(seconds / 60);
     const s = seconds % 60;
     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  }
+
+  formatHistoryDate(iso: string): string {
+    return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   }
 
   skipRest(): void {
