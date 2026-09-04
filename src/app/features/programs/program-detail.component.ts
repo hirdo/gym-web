@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ProgramService } from '../../core/services/program.service';
 import { WorkoutSessionService } from '../../core/services/workout-session.service';
 import { WorkoutService } from '../../core/services/workout.service';
+import { ExerciseLibraryService } from '../../core/services/exercise-library.service';
 import { AuthService } from '../../core/services/auth.service';
 import { toLocalDateString } from '../../core/utils/date.util';
 
@@ -20,6 +21,7 @@ export class ProgramDetailComponent {
   private readonly programService = inject(ProgramService);
   private readonly sessionService = inject(WorkoutSessionService);
   private readonly workoutService = inject(WorkoutService);
+  private readonly exerciseService = inject(ExerciseLibraryService);
   readonly auth = inject(AuthService);
 
   readonly applying = signal(false);
@@ -74,6 +76,10 @@ export class ProgramDetailComponent {
 
   closeConflictWarning(): void {
     this.conflictDates.set(null);
+  }
+
+  getExerciseImage(exerciseId: string): string | undefined {
+    return this.exerciseService.getById(exerciseId)?.imageUrl;
   }
 
   async startDay(): Promise<void> {

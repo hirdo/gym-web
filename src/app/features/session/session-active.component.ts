@@ -3,6 +3,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { SlicePipe } from '@angular/common';
 import { WorkoutSessionService } from '../../core/services/workout-session.service';
+import { WorkoutService } from '../../core/services/workout.service';
 import { SetRecord } from '../../core/models/workout.model';
 
 @Component({
@@ -16,6 +17,7 @@ export class SessionActiveComponent implements OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly sessionService = inject(WorkoutSessionService);
+  private readonly workoutService = inject(WorkoutService);
   private timerInterval: ReturnType<typeof setInterval> | null = null;
 
   readonly currentExerciseIndex = signal(0);
@@ -105,7 +107,12 @@ export class SessionActiveComponent implements OnDestroy {
     const s = this.session();
     if (!s) return;
     await this.sessionService.completeSession(s.id);
-    this.router.navigate(['/session/history']);
+    if (s.workoutId) {
+      await this.workoutService.markComplete(s.workoutId);
+      this.router.navigate(['/workouts', s.workoutId]);
+    } else {
+      this.router.navigate(['/session/history']);
+    }
   }
 
   formatTime(seconds: number): string {

@@ -25,8 +25,10 @@ export class WorkoutListComponent {
 
   get filteredWorkouts() {
     const cat = this.selectedCategory();
-    if (cat === 'all') return this.workoutService.workouts();
-    return this.workoutService.getByCategory(cat);
+    const workouts = cat === 'all' ? this.workoutService.workouts() : this.workoutService.getByCategory(cat);
+    return [...workouts].sort((a, b) =>
+      (a.scheduledDate || '9999-99-99').localeCompare(b.scheduledDate || '9999-99-99')
+    );
   }
 
   filterBy(category: WorkoutCategory | 'all'): void {

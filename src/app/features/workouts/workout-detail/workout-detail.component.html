@@ -42,6 +42,8 @@
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
               Edit
             </a>
+          }
+          @if (!w.completedDate && relatedSessions().length > 0) {
             <button (click)="markComplete()" class="btn-accent text-sm py-2 px-4">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
               Complete
@@ -63,6 +65,9 @@
         <div class="gym-card">
           <div class="flex items-center gap-3 mb-4">
             <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center shrink-0 text-primary font-heading font-bold">{{ i + 1 }}</div>
+            @if (exercise.imageUrl) {
+              <img [src]="exercise.imageUrl" alt="{{ exercise.name }}" class="w-10 h-10 rounded-xl object-cover shrink-0">
+            }
             <div>
               <h3 class="font-heading font-semibold text-lg uppercase tracking-wide">{{ exercise.name }}</h3>
               @if (exercise.restTime) {
