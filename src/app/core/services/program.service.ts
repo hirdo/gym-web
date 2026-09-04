@@ -1,4 +1,4 @@
-import { inject, Injectable, signal, computed, OnDestroy } from '@angular/core';
+import { inject, Injectable, signal, computed, effect, OnDestroy } from '@angular/core';
 import { TrainingProgram, Exercise } from '../models/workout.model';
 import { AuthService } from './auth.service';
 import { FirestoreService } from './firestore.service';
@@ -20,10 +20,21 @@ export class ProgramService implements OnDestroy {
     this.programsSignal().find(p => p.isActive)
   );
 
+  readonly visiblePrograms = computed(() =>
+    this.auth.isAdmin() ? this.programsSignal() : this.programsSignal().filter(p => p.isActive)
+  );
+
   readonly totalPrograms = computed(() => this.programsSignal().length);
+
+  private migrationChecked = false;
 
   constructor() {
     this.subscribeToPrograms();
+    effect(() => {
+      if (this.auth.isAdmin()) {
+        this.runPublishMigration();
+      }
+    });
   }
 
   ngOnDestroy(): void {
@@ -61,17 +72,10 @@ export class ProgramService implements OnDestroy {
     await this.firestore.deleteDocument(this.COLLECTION, id);
   }
 
-  async setActive(id: string): Promise<void> {
+  async setActive(id: string, active: boolean): Promise<void> {
     if (!this.auth.isAdmin()) throw new Error('Admin access required');
-    const current = this.activeProgram();
-    if (current && current.id !== id) {
-      await this.firestore.updateDocument(this.COLLECTION, current.id, {
-        isActive: false,
-        updatedAt: new Date().toISOString()
-      });
-    }
     await this.firestore.updateDocument(this.COLLECTION, id, {
-      isActive: true,
+      isActive: active,
       updatedAt: new Date().toISOString()
     });
   }
@@ -162,6 +166,27 @@ export class ProgramService implements OnDestroy {
     const monday = new Date(today);
     monday.setDate(today.getDate() + daysUntilMonday);
     return monday;
+  }
+
+  private async runPublishMigration(): Promise<void> {
+    if (this.migrationChecked) return;
+    this.migrationChecked = true;
+
+    const marker = await this.firestore.getDocument('meta', 'programsPublishMigration');
+    if (marker) return;
+
+    const all = await this.firestore.queryDocuments<TrainingProgram>(this.COLLECTION);
+    const toPublish = all.filter(p => !p.isActive);
+    await Promise.all(toPublish.map(p =>
+      this.firestore.updateDocument(this.COLLECTION, p.id, {
+        isActive: true,
+        updatedAt: new Date().toISOString()
+      })
+    ));
+
+    await this.firestore.setDocument('meta', 'programsPublishMigration', {
+      migratedAt: new Date().toISOString()
+    });
   }
 
   private subscribeToPrograms(): void {

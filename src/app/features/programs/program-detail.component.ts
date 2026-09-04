@@ -22,7 +22,9 @@ export class ProgramDetailComponent {
 
   readonly program = computed(() => {
     const id = this.route.snapshot.paramMap.get('id');
-    return id ? this.programService.getById(id) : undefined;
+    const p = id ? this.programService.getById(id) : undefined;
+    if (p && !p.isActive && !this.auth.isAdmin()) return undefined;
+    return p;
   });
 
   readonly progressPercent = computed(() => {
@@ -31,9 +33,14 @@ export class ProgramDetailComponent {
     return Math.round(((p.currentDay || 0) / p.totalDays) * 100);
   });
 
-  async setActive(): Promise<void> {
+  async publish(): Promise<void> {
     const p = this.program();
-    if (p) await this.programService.setActive(p.id);
+    if (p) await this.programService.setActive(p.id, true);
+  }
+
+  async unpublish(): Promise<void> {
+    const p = this.program();
+    if (p) await this.programService.setActive(p.id, false);
   }
 
   async applyProgram(): Promise<void> {

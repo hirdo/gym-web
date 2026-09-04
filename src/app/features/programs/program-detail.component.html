@@ -14,8 +14,10 @@
             @if (p.isActive) {
               <span class="inline-flex items-center gap-1.5 text-accent text-sm font-semibold">
                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                Active
+                Published
               </span>
+            } @else if (auth.isAdmin()) {
+              <span class="inline-flex items-center gap-1.5 text-warning text-sm font-semibold">Draft</span>
             }
           </div>
         </div>
@@ -29,8 +31,10 @@
             }
           </button>
           @if (auth.isAdmin()) {
-            @if (!p.isActive) {
-              <button (click)="setActive()" class="btn-primary text-sm py-2 px-4">Set Active</button>
+            @if (p.isActive) {
+              <button (click)="unpublish()" class="btn-secondary text-sm py-2 px-4">Unpublish</button>
+            } @else {
+              <button (click)="publish()" class="btn-primary text-sm py-2 px-4">Publish</button>
             }
             <button (click)="deleteProgram()" class="btn-secondary text-sm py-2 px-4 hover:!text-error hover:!border-error/50">Delete</button>
           }
