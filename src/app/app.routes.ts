@@ -67,7 +67,8 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/exercises/exercise-create.component').then(
             (m) => m.ExerciseCreateComponent
-          )
+          ),
+        data: { roles: ['admin'] }
       },
       {
         path: ':id',
@@ -94,7 +95,8 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/programs/program-create.component').then(
             (m) => m.ProgramCreateComponent
-          )
+          ),
+        data: { roles: ['admin'] }
       },
       {
         path: ':id',

@@ -19,6 +19,7 @@ export interface Workout {
   completedDate?: string;
   durationMinutes?: number;
   category: WorkoutCategory;
+  programId?: string;
   createdAt: string;
   updatedAt: string;
 }
