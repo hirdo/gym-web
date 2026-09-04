@@ -3,6 +3,7 @@ import { TrainingProgram, Exercise } from '../models/workout.model';
 import { AuthService } from './auth.service';
 import { FirestoreService } from './firestore.service';
 import { WorkoutService } from './workout.service';
+import { ExerciseLibraryService } from './exercise-library.service';
 import { toLocalDateString } from '../utils/date.util';
 import { Unsubscribe } from 'firebase/firestore';
 
@@ -11,6 +12,7 @@ export class ProgramService implements OnDestroy {
   private readonly auth = inject(AuthService);
   private readonly firestore = inject(FirestoreService);
   private readonly workoutService = inject(WorkoutService);
+  private readonly exerciseService = inject(ExerciseLibraryService);
   private readonly COLLECTION = 'programs';
   private readonly programsSignal = signal<TrainingProgram[]>([]);
   private unsubscribe: Unsubscribe | null = null;
@@ -95,7 +97,8 @@ export class ProgramService implements OnDestroy {
         sets: e.targetSets,
         reps: e.targetReps,
         weight: e.targetWeight,
-        restTime: e.restTime
+        restTime: e.restTime,
+        imageUrl: this.exerciseService.getById(e.exerciseId)?.imageUrl
       }));
 
       await this.workoutService.add({

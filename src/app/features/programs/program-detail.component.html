@@ -85,7 +85,12 @@
           <div class="space-y-1.5">
             @for (ex of day.exercises; track ex.exerciseId) {
               <div class="flex items-center justify-between text-sm">
-                <span>{{ ex.exerciseName }}</span>
+                <span class="flex items-center gap-2">
+                  @if (getExerciseImage(ex.exerciseId); as img) {
+                    <img [src]="img" alt="{{ ex.exerciseName }}" class="w-8 h-8 rounded-lg object-cover shrink-0">
+                  }
+                  {{ ex.exerciseName }}
+                </span>
                 <span class="text-text-muted text-xs">{{ ex.targetSets }} &times; {{ ex.targetReps }}
                   @if (ex.targetWeight) {
                     &middot; {{ ex.targetWeight }}kg

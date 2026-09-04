@@ -7,6 +7,7 @@ export interface Exercise {
   duration?: number;
   restTime?: number;
   notes?: string;
+  imageUrl?: string;
 }
 
 export interface Workout {
