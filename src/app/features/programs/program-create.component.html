@@ -67,8 +67,13 @@
                   }
                 </div>
                 <div class="space-y-2">
-                  <input type="text" formControlName="exerciseName" placeholder="Exercise name"
-                         class="w-full bg-surface border border-border rounded-lg px-3 py-2 text-text text-sm focus:border-primary focus:outline-none transition-colors">
+                  <button type="button" (click)="openExercisePicker(di, ei)"
+                          class="w-full bg-surface border border-border rounded-lg px-3 py-2 text-left text-sm hover:border-primary/50 focus:border-primary focus:outline-none transition-colors flex items-center justify-between cursor-pointer">
+                    <span [class]="ex.get('exerciseName')?.value ? '' : 'text-text-muted'">
+                      {{ ex.get('exerciseName')?.value || 'Choose exercise…' }}
+                    </span>
+                    <svg class="w-4 h-4 text-text-muted shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                  </button>
                   <div class="grid grid-cols-4 gap-2">
                     <div>
                       <label class="block text-[10px] text-text-muted mb-1">Sets</label>
@@ -117,4 +122,9 @@
       <a routerLink="/programs" class="btn-secondary py-3 px-6">Cancel</a>
     </div>
   </form>
+
+  <app-exercise-picker-modal
+    [open]="pickerOpen()"
+    (closed)="closeExercisePicker()"
+    (exerciseSelected)="onExercisePicked($event)" />
 </div>

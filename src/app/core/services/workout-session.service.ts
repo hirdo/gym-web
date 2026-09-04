@@ -181,6 +181,12 @@ export class WorkoutSessionService implements OnDestroy {
       });
   }
 
+  getSessionsForWorkout(workoutId: string): WorkoutSession[] {
+    return this.completedSessions()
+      .filter(s => s.workoutId === workoutId)
+      .sort((a, b) => (b.completedAt || '').localeCompare(a.completedAt || ''));
+  }
+
   getLastWeight(exerciseName: string): number | undefined {
     const history = this.getExerciseHistory(exerciseName);
     if (history.length === 0) return undefined;
