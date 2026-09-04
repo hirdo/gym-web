@@ -5,11 +5,12 @@ import { SlicePipe } from '@angular/common';
 import { WorkoutSessionService } from '../../core/services/workout-session.service';
 import { WorkoutService } from '../../core/services/workout.service';
 import { SetRecord } from '../../core/models/workout.model';
+import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-session-active',
   standalone: true,
-  imports: [RouterLink, FormsModule, SlicePipe],
+  imports: [RouterLink, FormsModule, SlicePipe, LoadingSpinnerComponent],
   templateUrl: './session-active.component.html',
   styleUrl: './session-active.component.scss'
 })
@@ -26,6 +27,7 @@ export class SessionActiveComponent implements OnDestroy {
   readonly restSeconds = signal(0);
   readonly isResting = signal(false);
   readonly elapsedSeconds = signal(0);
+  readonly completing = signal(false);
 
   readonly session = computed(() => {
     const id = this.route.snapshot.paramMap.get('id');
@@ -39,6 +41,11 @@ export class SessionActiveComponent implements OnDestroy {
   });
 
   readonly totalExercises = computed(() => this.session()?.exercises.length || 0);
+
+  readonly hasLoggedAnySet = computed(() => {
+    const s = this.session();
+    return s ? s.exercises.some(e => e.sets.length > 0) : false;
+  });
 
   readonly overallProgress = computed(() => {
     const s = this.session();
@@ -105,7 +112,8 @@ export class SessionActiveComponent implements OnDestroy {
 
   async completeSession(): Promise<void> {
     const s = this.session();
-    if (!s) return;
+    if (!s || !this.hasLoggedAnySet()) return;
+    this.completing.set(true);
     await this.sessionService.completeSession(s.id);
     if (s.workoutId) {
       await this.workoutService.markComplete(s.workoutId);
