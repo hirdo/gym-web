@@ -3,12 +3,13 @@ import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormArray, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { ProgramService } from '../../core/services/program.service';
 import { ExerciseLibraryService } from '../../core/services/exercise-library.service';
-import { ProgramDifficulty } from '../../core/models/workout.model';
+import { ExercisePickerModalComponent } from '../../shared/components/exercise-picker-modal/exercise-picker-modal.component';
+import { ProgramDifficulty, ExerciseTemplate } from '../../core/models/workout.model';
 
 @Component({
   selector: 'app-program-create',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, RouterLink],
+  imports: [ReactiveFormsModule, FormsModule, RouterLink, ExercisePickerModalComponent],
   templateUrl: './program-create.component.html',
   styleUrl: './program-create.component.scss'
 })
@@ -24,7 +25,8 @@ export class ProgramCreateComponent {
     { value: 'advanced', label: 'Advanced' }
   ];
 
-  readonly exerciseSearch = signal('');
+  readonly pickerOpen = signal(false);
+  private pickerTarget: { dayIndex: number; exerciseIndex: number } | null = null;
 
   readonly form = this.fb.group({
     name: ['', Validators.required],
@@ -83,6 +85,26 @@ export class ProgramCreateComponent {
     if (exercises.length > 1) {
       exercises.removeAt(exerciseIndex);
     }
+  }
+
+  openExercisePicker(dayIndex: number, exerciseIndex: number): void {
+    this.pickerTarget = { dayIndex, exerciseIndex };
+    this.pickerOpen.set(true);
+  }
+
+  onExercisePicked(exercise: ExerciseTemplate): void {
+    if (!this.pickerTarget) return;
+    const group = this.getDayExercises(this.pickerTarget.dayIndex).at(this.pickerTarget.exerciseIndex);
+    group.patchValue({
+      exerciseId: exercise.id,
+      exerciseName: exercise.name
+    });
+    this.pickerTarget = null;
+  }
+
+  closeExercisePicker(): void {
+    this.pickerOpen.set(false);
+    this.pickerTarget = null;
   }
 
   async onSubmit(): Promise<void> {

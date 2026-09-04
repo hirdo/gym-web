@@ -1,0 +1,53 @@
+@if (open) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
+    <div class="absolute inset-0 bg-background/80 backdrop-blur-sm" (click)="close()"></div>
+
+    <div class="relative bg-surface border border-border rounded-2xl w-full max-w-2xl max-h-[85vh] flex flex-col overflow-hidden">
+      <div class="flex items-center justify-between p-5 border-b border-border shrink-0">
+        <h2 class="text-lg font-heading font-bold uppercase tracking-wider">Choose Exercise</h2>
+        <button type="button" (click)="close()" class="text-text-muted hover:text-text transition-colors cursor-pointer" aria-label="Close">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="p-5 border-b border-border shrink-0 space-y-3">
+        <input type="text" [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)"
+               placeholder="Search exercises..."
+               class="w-full bg-background border border-border rounded-lg px-3 py-2.5 text-text text-sm focus:border-primary focus:outline-none transition-colors">
+        <div class="grid grid-cols-2 gap-3">
+          <select [ngModel]="selectedMuscle()" (ngModelChange)="selectedMuscle.set($event)"
+                  class="w-full bg-background border border-border rounded-lg px-3 py-2.5 text-text text-sm focus:border-primary focus:outline-none transition-colors">
+            <option value="">All Muscles</option>
+            @for (m of allMuscleGroups; track m) {
+              <option [value]="m">{{ m | titlecase }}</option>
+            }
+          </select>
+          <select [ngModel]="selectedEquipment()" (ngModelChange)="selectedEquipment.set($event)"
+                  class="w-full bg-background border border-border rounded-lg px-3 py-2.5 text-text text-sm focus:border-primary focus:outline-none transition-colors">
+            <option value="">All Equipment</option>
+            @for (eq of allEquipment; track eq) {
+              <option [value]="eq">{{ eq | titlecase }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="overflow-y-auto p-3 space-y-1.5 flex-1">
+        @if (filteredExercises().length === 0) {
+          <p class="text-text-muted text-sm text-center py-10">No exercises match your filters</p>
+        } @else {
+          @for (exercise of filteredExercises(); track exercise.id) {
+            <button type="button" (click)="select(exercise)"
+                    class="w-full text-left flex items-center justify-between p-3 rounded-xl hover:bg-surface-light transition-colors cursor-pointer">
+              <div>
+                <p class="font-semibold text-sm">{{ exercise.name }}</p>
+                <p class="text-text-muted text-xs mt-0.5 capitalize">{{ exercise.equipment }} &middot; {{ exercise.primaryMuscles.join(', ') }}</p>
+              </div>
+              <svg class="w-4 h-4 text-text-muted shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </button>
+          }
+        }
+      </div>
+    </div>
+  </div>
+}

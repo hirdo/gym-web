@@ -21,6 +21,30 @@ export class WorkoutDetailComponent {
     return id ? this.workoutService.getById(id) : undefined;
   });
 
+  readonly relatedSessions = computed(() => {
+    const w = this.workout();
+    return w ? this.sessionService.getSessionsForWorkout(w.id) : [];
+  });
+
+  formatDuration(seconds?: number): string {
+    if (!seconds) return '--';
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}m ${s}s`;
+  }
+
+  formatDate(iso: string): string {
+    return new Date(iso).toLocaleDateString('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric'
+    });
+  }
+
+  totalSets(exercises: { sets: unknown[] }[]): number {
+    return exercises.reduce((sum, e) => sum + e.sets.length, 0);
+  }
+
   async startSession(): Promise<void> {
     const w = this.workout();
     if (w) {
