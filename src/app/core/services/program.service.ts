@@ -3,6 +3,7 @@ import { TrainingProgram, Exercise } from '../models/workout.model';
 import { AuthService } from './auth.service';
 import { FirestoreService } from './firestore.service';
 import { WorkoutService } from './workout.service';
+import { toLocalDateString } from '../utils/date.util';
 import { Unsubscribe } from 'firebase/firestore';
 
 @Injectable({ providedIn: 'root' })
@@ -80,11 +81,11 @@ export class ProgramService implements OnDestroy {
     });
   }
 
-  async applyProgram(id: string): Promise<void> {
+  async applyProgram(id: string, startDate: string): Promise<void> {
     const program = this.getById(id);
     if (!program) return;
 
-    const dates = this.calculateScheduleDates(program.sessionsPerWeek, program.days.length);
+    const dates = this.calculateConsecutiveDates(startDate, program.days.length);
 
     for (let i = 0; i < program.days.length; i++) {
       const day = program.days[i];
@@ -122,50 +123,14 @@ export class ProgramService implements OnDestroy {
     });
   }
 
-  private calculateScheduleDates(sessionsPerWeek: number, totalDays: number): string[] {
-    const weeklyPattern = this.getWeeklyPattern(sessionsPerWeek);
+  calculateConsecutiveDates(startDate: string, totalDays: number): string[] {
+    const [y, m, d] = startDate.split('-').map(Number);
     const dates: string[] = [];
-    const start = this.getNextMonday();
-
-    let weekOffset = 0;
-    let patternIndex = 0;
-
-    while (dates.length < totalDays) {
-      const date = new Date(start);
-      date.setDate(date.getDate() + weekOffset * 7 + weeklyPattern[patternIndex]);
-      dates.push(date.toISOString().split('T')[0]);
-
-      patternIndex++;
-      if (patternIndex >= weeklyPattern.length) {
-        patternIndex = 0;
-        weekOffset++;
-      }
+    for (let i = 0; i < totalDays; i++) {
+      const date = new Date(y, m - 1, d + i);
+      dates.push(toLocalDateString(date));
     }
-
     return dates;
-  }
-
-  private getWeeklyPattern(sessionsPerWeek: number): number[] {
-    switch (sessionsPerWeek) {
-      case 1: return [0];
-      case 2: return [0, 3];
-      case 3: return [0, 2, 4];
-      case 4: return [0, 1, 3, 4];
-      case 5: return [0, 1, 2, 3, 4];
-      case 6: return [0, 1, 2, 3, 4, 5];
-      case 7: return [0, 1, 2, 3, 4, 5, 6];
-      default: return [0, 2, 4];
-    }
-  }
-
-  private getNextMonday(): Date {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const day = today.getDay();
-    const daysUntilMonday = day === 0 ? 1 : day === 1 ? 0 : 8 - day;
-    const monday = new Date(today);
-    monday.setDate(today.getDate() + daysUntilMonday);
-    return monday;
   }
 
   private async runPublishMigration(): Promise<void> {

@@ -14,10 +14,17 @@
           </div>
         </div>
         @if (auth.isAdmin()) {
-          <button (click)="deleteExercise()" class="btn-secondary text-sm py-2 px-4 hover:!text-error hover:!border-error/50 shrink-0">Delete</button>
+          <div class="flex gap-2 shrink-0">
+            <a [routerLink]="['/exercises', ex.id, 'edit']" class="btn-secondary text-sm py-2 px-4">Edit</a>
+            <button (click)="deleteExercise()" class="btn-secondary text-sm py-2 px-4 hover:!text-error hover:!border-error/50">Delete</button>
+          </div>
         }
       </div>
     </div>
+
+    @if (ex.imageUrl) {
+      <img [src]="ex.imageUrl" alt="{{ ex.name }}" class="w-full max-h-80 object-cover rounded-2xl mb-6 border border-border">
+    }
 
     <!-- Muscle Groups -->
     <div class="gym-card mb-6">

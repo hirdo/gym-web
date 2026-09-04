@@ -4,7 +4,7 @@
     Back to Programs
   </a>
 
-  <h1 class="text-3xl font-heading font-bold uppercase tracking-wide mb-8">Create Program</h1>
+  <h1 class="text-3xl font-heading font-bold uppercase tracking-wide mb-8">{{ isEditMode() ? 'Edit Program' : 'Create Program' }}</h1>
 
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-6">
     <!-- Program Info -->
@@ -118,7 +118,7 @@
     </button>
 
     <div class="flex gap-3">
-      <button type="submit" class="btn-primary flex-1 py-3" [disabled]="form.invalid">Create Program</button>
+      <button type="submit" class="btn-primary flex-1 py-3" [disabled]="form.invalid">{{ isEditMode() ? 'Save Changes' : 'Create Program' }}</button>
       <a routerLink="/programs" class="btn-secondary py-3 px-6">Cancel</a>
     </div>
   </form>

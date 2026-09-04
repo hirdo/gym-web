@@ -1,8 +1,9 @@
-import { Component, inject } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Component, inject, signal, OnInit } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TitleCasePipe } from '@angular/common';
 import { ExerciseLibraryService } from '../../core/services/exercise-library.service';
+import { StorageService } from '../../core/services/storage.service';
 import { WorkoutCategory, MuscleGroup, Equipment } from '../../core/models/workout.model';
 
 @Component({
@@ -12,10 +13,12 @@ import { WorkoutCategory, MuscleGroup, Equipment } from '../../core/models/worko
   templateUrl: './exercise-create.component.html',
   styleUrl: './exercise-create.component.scss'
 })
-export class ExerciseCreateComponent {
+export class ExerciseCreateComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly exerciseService = inject(ExerciseLibraryService);
+  private readonly storageService = inject(StorageService);
 
   readonly categories: WorkoutCategory[] = ['strength', 'cardio', 'flexibility', 'hiit', 'custom'];
   readonly muscleGroups: MuscleGroup[] = [
@@ -29,12 +32,46 @@ export class ExerciseCreateComponent {
 
   readonly selectedMuscles = new Set<MuscleGroup>();
 
+  readonly isEditMode = signal(false);
+  private editId: string | null = null;
+
+  readonly selectedFile = signal<File | null>(null);
+  readonly imagePreviewUrl = signal<string | null>(null);
+  readonly uploading = signal(false);
+  readonly uploadError = signal<string | null>(null);
+
   readonly form = this.fb.group({
     name: ['', Validators.required],
     category: ['strength' as WorkoutCategory, Validators.required],
     equipment: ['barbell' as Equipment, Validators.required],
     instructions: ['']
   });
+
+  ngOnInit(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (!id) return;
+
+    const exercise = this.exerciseService.getById(id);
+    if (!exercise) {
+      this.router.navigate(['/exercises']);
+      return;
+    }
+
+    this.isEditMode.set(true);
+    this.editId = id;
+    this.form.patchValue({
+      name: exercise.name,
+      category: exercise.category,
+      equipment: exercise.equipment,
+      instructions: exercise.instructions || ''
+    });
+    for (const muscle of exercise.primaryMuscles) {
+      this.selectedMuscles.add(muscle);
+    }
+    if (exercise.imageUrl) {
+      this.imagePreviewUrl.set(exercise.imageUrl);
+    }
+  }
 
   toggleMuscle(muscle: MuscleGroup): void {
     if (this.selectedMuscles.has(muscle)) {
@@ -44,18 +81,52 @@ export class ExerciseCreateComponent {
     }
   }
 
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    this.selectedFile.set(file);
+    this.imagePreviewUrl.set(URL.createObjectURL(file));
+  }
+
   async onSubmit(): Promise<void> {
     if (this.form.invalid || this.selectedMuscles.size === 0) return;
 
     const value = this.form.getRawValue();
-    const exercise = await this.exerciseService.addExercise({
+    const data = {
       name: value.name!,
       category: value.category!,
       equipment: value.equipment!,
       primaryMuscles: Array.from(this.selectedMuscles),
-      instructions: value.instructions || undefined,
-      isCustom: true
-    });
-    this.router.navigate(['/exercises', exercise.id]);
+      instructions: value.instructions || undefined
+    };
+
+    let exerciseId: string;
+    if (this.isEditMode() && this.editId) {
+      exerciseId = this.editId;
+      await this.exerciseService.updateExercise(exerciseId, data);
+    } else {
+      const exercise = await this.exerciseService.addExercise({ ...data, isCustom: true });
+      exerciseId = exercise.id;
+    }
+
+    const file = this.selectedFile();
+    if (file) {
+      this.uploading.set(true);
+      this.uploadError.set(null);
+      try {
+        const imageUrl = await this.storageService.uploadExerciseImage(exerciseId, file);
+        await this.exerciseService.updateExercise(exerciseId, { imageUrl });
+      } catch (err) {
+        this.uploadError.set(
+          err instanceof Error ? err.message : 'Image upload failed.'
+        );
+        this.uploading.set(false);
+        return;
+      }
+      this.uploading.set(false);
+    }
+
+    this.router.navigate(['/exercises', exerciseId]);
   }
 }

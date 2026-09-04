@@ -1,5 +1,4 @@
-import { Injectable } from '@angular/core';
-import { initializeApp, FirebaseApp } from 'firebase/app';
+import { inject, Injectable } from '@angular/core';
 import {
   getFirestore,
   Firestore,
@@ -20,16 +19,15 @@ import {
   Unsubscribe
 } from 'firebase/firestore';
 import { environment } from '../../../environments/environment';
+import { FirebaseAppService } from './firebase-app.service';
 
 @Injectable({ providedIn: 'root' })
 export class FirestoreService {
-  private app: FirebaseApp;
-  private db: Firestore;
+  private readonly db: Firestore;
   private initialized = false;
 
   constructor() {
-    this.app = initializeApp(environment.firebase);
-    this.db = getFirestore(this.app);
+    this.db = getFirestore(inject(FirebaseAppService).app);
     this.initialized = !!environment.firebase.projectId && !environment.firebase.projectId.startsWith('YOUR_');
   }
 
