@@ -2,6 +2,7 @@ import { Component, inject, computed } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ExerciseLibraryService } from '../../core/services/exercise-library.service';
 import { WorkoutSessionService } from '../../core/services/workout-session.service';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-exercise-detail',
@@ -15,6 +16,7 @@ export class ExerciseDetailComponent {
   private readonly router = inject(Router);
   private readonly exerciseService = inject(ExerciseLibraryService);
   private readonly sessionService = inject(WorkoutSessionService);
+  readonly auth = inject(AuthService);
 
   readonly exercise = computed(() => {
     const id = this.route.snapshot.paramMap.get('id');

@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TitleCasePipe } from '@angular/common';
 import { ExerciseLibraryService } from '../../core/services/exercise-library.service';
+import { AuthService } from '../../core/services/auth.service';
 import { MuscleGroup, Equipment } from '../../core/models/workout.model';
 
 @Component({
@@ -14,6 +15,7 @@ import { MuscleGroup, Equipment } from '../../core/models/workout.model';
 })
 export class ExerciseListComponent {
   readonly exerciseService = inject(ExerciseLibraryService);
+  readonly auth = inject(AuthService);
 
   readonly searchQuery = signal('');
   readonly selectedMuscle = signal<MuscleGroup | ''>('');

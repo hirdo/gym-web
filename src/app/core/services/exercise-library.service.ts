@@ -72,6 +72,7 @@ export class ExerciseLibraryService implements OnDestroy {
   }
 
   async addExercise(exercise: Omit<ExerciseTemplate, 'id'>): Promise<ExerciseTemplate> {
+    if (!this.auth.isAdmin()) throw new Error('Admin access required');
     const userId = this.auth.userId();
     const data = {
       ...exercise,
@@ -83,10 +84,12 @@ export class ExerciseLibraryService implements OnDestroy {
   }
 
   async updateExercise(id: string, changes: Partial<ExerciseTemplate>): Promise<void> {
+    if (!this.auth.isAdmin()) throw new Error('Admin access required');
     await this.firestore.updateDocument(this.COLLECTION, id, changes);
   }
 
   async deleteExercise(id: string): Promise<void> {
+    if (!this.auth.isAdmin()) throw new Error('Admin access required');
     await this.firestore.deleteDocument(this.COLLECTION, id);
   }
 

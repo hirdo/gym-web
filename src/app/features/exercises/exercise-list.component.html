@@ -4,10 +4,12 @@
       <h1 class="text-3xl sm:text-4xl font-heading font-bold uppercase tracking-wide">Exercise Library</h1>
       <p class="text-text-muted mt-1">{{ filteredExercises().length }} exercises</p>
     </div>
-    <a routerLink="/exercises/new" class="btn-primary text-sm py-2 px-4 shrink-0">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-      Add Exercise
-    </a>
+    @if (auth.isAdmin()) {
+      <a routerLink="/exercises/new" class="btn-primary text-sm py-2 px-4 shrink-0">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        Add Exercise
+      </a>
+    }
   </div>
 
   <!-- Filters -->
@@ -53,7 +55,9 @@
       </div>
       @if (exerciseService.exercises().length === 0) {
         <p class="text-text-muted mb-4">No exercises in the library yet</p>
-        <a routerLink="/exercises/new" class="btn-primary">Add Your First Exercise</a>
+        @if (auth.isAdmin()) {
+          <a routerLink="/exercises/new" class="btn-primary">Add Your First Exercise</a>
+        }
       } @else {
         <p class="text-text-muted">No exercises match your filters</p>
       }

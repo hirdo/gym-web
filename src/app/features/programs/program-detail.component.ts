@@ -1,7 +1,8 @@
-import { Component, inject, computed } from '@angular/core';
+import { Component, inject, computed, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ProgramService } from '../../core/services/program.service';
 import { WorkoutSessionService } from '../../core/services/workout-session.service';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-program-detail',
@@ -15,6 +16,9 @@ export class ProgramDetailComponent {
   private readonly router = inject(Router);
   private readonly programService = inject(ProgramService);
   private readonly sessionService = inject(WorkoutSessionService);
+  readonly auth = inject(AuthService);
+
+  readonly applying = signal(false);
 
   readonly program = computed(() => {
     const id = this.route.snapshot.paramMap.get('id');
@@ -30,6 +34,18 @@ export class ProgramDetailComponent {
   async setActive(): Promise<void> {
     const p = this.program();
     if (p) await this.programService.setActive(p.id);
+  }
+
+  async applyProgram(): Promise<void> {
+    const p = this.program();
+    if (!p || this.applying()) return;
+    this.applying.set(true);
+    try {
+      await this.programService.applyProgram(p.id);
+      this.router.navigate(['/schedule']);
+    } finally {
+      this.applying.set(false);
+    }
   }
 
   async startDay(): Promise<void> {

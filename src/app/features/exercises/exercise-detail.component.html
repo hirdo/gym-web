@@ -16,7 +16,7 @@
             }
           </div>
         </div>
-        @if (ex.isCustom) {
+        @if (ex.isCustom && auth.isAdmin()) {
           <button (click)="deleteExercise()" class="btn-secondary text-sm py-2 px-4 hover:!text-error hover:!border-error/50 shrink-0">Delete</button>
         }
       </div>
