@@ -14,6 +14,9 @@ const firebaseStorageBucket = process.env.FIREBASE_STORAGE_BUCKET || '';
 const firebaseMessagingSenderId = process.env.FIREBASE_MESSAGING_SENDER_ID || '';
 const firebaseAppId = process.env.FIREBASE_APP_ID || '';
 
+const cloudinaryCloudName = process.env.CLOUDINARY_CLOUD_NAME || '';
+const cloudinaryUploadPreset = process.env.CLOUDINARY_UPLOAD_PRESET || '';
+
 const content = `export const environment = {
   production: true,
   keycloak: {
@@ -28,6 +31,10 @@ const content = `export const environment = {
     storageBucket: '${firebaseStorageBucket}',
     messagingSenderId: '${firebaseMessagingSenderId}',
     appId: '${firebaseAppId}'
+  },
+  cloudinary: {
+    cloudName: '${cloudinaryCloudName}',
+    uploadPreset: '${cloudinaryUploadPreset}'
   }
 };
 `;
@@ -38,3 +45,4 @@ console.log(`  KEYCLOAK_URL: ${keycloakUrl}`);
 console.log(`  KEYCLOAK_REALM: ${keycloakRealm}`);
 console.log(`  KEYCLOAK_CLIENT_ID: ${keycloakClientId}`);
 console.log(`  FIREBASE_PROJECT_ID: ${firebaseProjectId || '(not set)'}`);
+console.log(`  CLOUDINARY_CLOUD_NAME: ${cloudinaryCloudName || '(not set)'}`);
