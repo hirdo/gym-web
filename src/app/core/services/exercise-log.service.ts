@@ -15,7 +15,9 @@ export class ExerciseLogService implements OnDestroy {
 
   readonly logs = this.logsSignal.asReadonly();
 
-  readonly completedLogs = computed(() => this.logsSignal().filter(l => l.completedAt));
+  readonly completedLogs = computed(() =>
+    this.logsSignal().filter(l => l.completedAt && l.sets.length > 0)
+  );
 
   constructor() {
     effect(() => {
