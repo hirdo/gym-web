@@ -2,6 +2,7 @@ import { inject, Injectable, signal, computed, effect, OnDestroy } from '@angula
 import { Workout } from '../models/workout.model';
 import { AuthService } from './auth.service';
 import { FirestoreService } from './firestore.service';
+import { toLocalDateString } from '../utils/date.util';
 import { where, Unsubscribe } from 'firebase/firestore';
 
 @Injectable({ providedIn: 'root' })
@@ -11,6 +12,7 @@ export class WorkoutService implements OnDestroy {
   private readonly COLLECTION = 'workouts';
   private readonly workoutsSignal = signal<Workout[]>([]);
   private unsubscribe: Unsubscribe | null = null;
+  private sessionsCleanupChecked = false;
 
   readonly workouts = this.workoutsSignal.asReadonly();
 
@@ -26,6 +28,43 @@ export class WorkoutService implements OnDestroy {
     this.workoutsSignal().filter(w => w.completedDate).length
   );
 
+  readonly thisWeekCount = computed(() => {
+    const now = new Date();
+    const monday = new Date(now);
+    monday.setDate(now.getDate() - ((now.getDay() + 6) % 7));
+    monday.setHours(0, 0, 0, 0);
+    const mondayISO = monday.toISOString();
+    return this.workoutsSignal().filter(w => w.completedDate && w.completedDate >= mondayISO).length;
+  });
+
+  readonly streak = computed(() => {
+    const completed = this.workoutsSignal().filter(w => w.completedDate);
+    if (completed.length === 0) return 0;
+
+    const uniqueDays = new Set(
+      completed.map(w => toLocalDateString(new Date(w.completedDate!)))
+    );
+    const sortedDays = Array.from(uniqueDays).sort().reverse();
+
+    const today = toLocalDateString(new Date());
+    const yesterday = toLocalDateString(new Date(Date.now() - 86400000));
+
+    if (sortedDays[0] !== today && sortedDays[0] !== yesterday) return 0;
+
+    let count = 1;
+    for (let i = 1; i < sortedDays.length; i++) {
+      const prev = new Date(sortedDays[i - 1]);
+      const curr = new Date(sortedDays[i]);
+      const diffDays = (prev.getTime() - curr.getTime()) / 86400000;
+      if (diffDays === 1) {
+        count++;
+      } else {
+        break;
+      }
+    }
+    return count;
+  });
+
   constructor() {
     effect(() => {
       const userId = this.auth.userId();
@@ -34,6 +73,11 @@ export class WorkoutService implements OnDestroy {
         this.subscribeToWorkouts(userId);
       } else {
         this.workoutsSignal.set([]);
+      }
+    });
+    effect(() => {
+      if (this.auth.isAdmin()) {
+        this.runSessionsCleanupMigration();
       }
     });
   }
@@ -92,6 +136,21 @@ export class WorkoutService implements OnDestroy {
       grouped.get(uid)!.push(w);
     }
     return Array.from(grouped, ([userId, workouts]) => ({ userId, workouts }));
+  }
+
+  private async runSessionsCleanupMigration(): Promise<void> {
+    if (this.sessionsCleanupChecked) return;
+    this.sessionsCleanupChecked = true;
+
+    const marker = await this.firestore.getDocument('meta', 'workoutSessionsCleanup');
+    if (marker) return;
+
+    const oldSessions = await this.firestore.queryDocuments<{ id: string }>('workout_sessions');
+    await Promise.all(oldSessions.map(s => this.firestore.deleteDocument('workout_sessions', s.id)));
+
+    await this.firestore.setDocument('meta', 'workoutSessionsCleanup', {
+      migratedAt: new Date().toISOString()
+    });
   }
 
   private subscribeToWorkouts(userId: string): void {

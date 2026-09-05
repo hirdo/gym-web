@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { WorkoutService } from '../../../core/services/workout.service';
-import { WorkoutSessionService } from '../../../core/services/workout-session.service';
+import { ExerciseLogService } from '../../../core/services/exercise-log.service';
 import { WorkoutCategory } from '../../../core/models/workout.model';
 
 @Component({
@@ -13,7 +13,7 @@ import { WorkoutCategory } from '../../../core/models/workout.model';
 })
 export class WorkoutListComponent {
   readonly workoutService = inject(WorkoutService);
-  private readonly sessionService = inject(WorkoutSessionService);
+  private readonly exerciseLogService = inject(ExerciseLogService);
   readonly selectedCategory = signal<WorkoutCategory | 'all'>('all');
 
   readonly categories: { value: WorkoutCategory | 'all'; label: string }[] = [
@@ -40,7 +40,7 @@ export class WorkoutListComponent {
   async deleteWorkout(id: string, event: Event): Promise<void> {
     event.preventDefault();
     event.stopPropagation();
-    await this.sessionService.deleteSessionsForWorkout(id);
+    await this.exerciseLogService.deleteLogsForWorkout(id);
     await this.workoutService.delete(id);
   }
 }
