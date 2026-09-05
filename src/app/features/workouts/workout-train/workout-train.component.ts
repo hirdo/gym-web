@@ -2,25 +2,27 @@ import { Component, inject, computed, signal, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { SlicePipe } from '@angular/common';
-import { WorkoutSessionService } from '../../core/services/workout-session.service';
-import { WorkoutService } from '../../core/services/workout.service';
-import { SetRecord } from '../../core/models/workout.model';
-import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner.component';
-import { parseLocalDate } from '../../core/utils/date.util';
+import { ExerciseLogService } from '../../../core/services/exercise-log.service';
+import { WorkoutService } from '../../../core/services/workout.service';
+import { SetRecord } from '../../../core/models/workout.model';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
+import { parseLocalDate } from '../../../core/utils/date.util';
 
 @Component({
-  selector: 'app-session-active',
+  selector: 'app-workout-train',
   standalone: true,
   imports: [RouterLink, FormsModule, SlicePipe, LoadingSpinnerComponent],
-  templateUrl: './session-active.component.html',
-  styleUrl: './session-active.component.scss'
+  templateUrl: './workout-train.component.html',
+  styleUrl: './workout-train.component.scss'
 })
-export class SessionActiveComponent implements OnDestroy {
+export class WorkoutTrainComponent implements OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly sessionService = inject(WorkoutSessionService);
+  private readonly exerciseLogService = inject(ExerciseLogService);
   private readonly workoutService = inject(WorkoutService);
   private timerInterval: ReturnType<typeof setInterval> | null = null;
+
+  private readonly workoutId = this.route.snapshot.paramMap.get('id') || '';
 
   readonly currentExerciseIndex = signal(0);
   readonly weightInput = signal<number>(0);
@@ -30,43 +32,38 @@ export class SessionActiveComponent implements OnDestroy {
   readonly elapsedSeconds = signal(0);
   readonly completing = signal(false);
 
-  readonly session = computed(() => {
-    const id = this.route.snapshot.paramMap.get('id');
-    return this.sessionService.sessions().find(s => s.id === id);
-  });
+  readonly workout = computed(() => this.workoutService.getById(this.workoutId));
 
-  readonly currentExercise = computed(() => {
-    const s = this.session();
-    if (!s) return undefined;
-    return s.exercises[this.currentExerciseIndex()];
-  });
+  readonly logs = computed(() => this.exerciseLogService.logsForWorkout(this.workoutId));
 
-  readonly totalExercises = computed(() => this.session()?.exercises.length || 0);
+  readonly currentLog = computed(() => this.logs()[this.currentExerciseIndex()]);
 
-  readonly hasLoggedAnySet = computed(() => {
-    const s = this.session();
-    return s ? s.exercises.some(e => e.sets.length > 0) : false;
-  });
+  readonly totalExercises = computed(() => this.logs().length);
+
+  readonly hasLoggedAnySet = computed(() => this.logs().some(l => l.sets.length > 0));
 
   readonly currentExerciseHistory = computed(() => {
-    const ex = this.currentExercise();
-    return ex ? this.sessionService.getExerciseHistory(ex.exerciseName).slice(0, 5) : [];
+    const log = this.currentLog();
+    return log ? this.exerciseLogService.getExerciseHistory(log.exerciseName, log.exerciseTemplateId).slice(0, 5) : [];
   });
 
   readonly overallProgress = computed(() => {
-    const s = this.session();
-    if (!s) return 0;
-    const totalSets = s.exercises.reduce((sum, e) => sum + e.targetSets, 0);
-    const completedSets = s.exercises.reduce((sum, e) => sum + e.sets.length, 0);
+    const logs = this.logs();
+    const totalSets = logs.reduce((sum, l) => sum + l.targetSets, 0);
+    const completedSets = logs.reduce((sum, l) => sum + l.sets.length, 0);
     return totalSets > 0 ? Math.round((completedSets / totalSets) * 100) : 0;
   });
 
   constructor() {
     this.startElapsedTimer();
-    const ex = this.currentExercise();
-    if (ex) {
-      this.weightInput.set(ex.targetWeight || 0);
-      this.repsInput.set(ex.targetReps || 10);
+    const w = this.workout();
+    if (w?.completedDate) {
+      this.router.navigate(['/workouts', w.id]);
+    }
+    const log = this.currentLog();
+    if (log) {
+      this.weightInput.set(log.targetWeight || 0);
+      this.repsInput.set(log.targetReps || 10);
     }
   }
 
@@ -77,11 +74,11 @@ export class SessionActiveComponent implements OnDestroy {
   navigateExercise(index: number): void {
     this.currentExerciseIndex.set(index);
     this.stopRestTimer();
-    const ex = this.session()?.exercises[index];
-    if (ex) {
-      const lastSet = ex.sets[ex.sets.length - 1];
-      this.weightInput.set(lastSet?.weight ?? ex.targetWeight ?? 0);
-      this.repsInput.set(lastSet?.reps ?? ex.targetReps ?? 10);
+    const log = this.logs()[index];
+    if (log) {
+      const lastSet = log.sets[log.sets.length - 1];
+      this.weightInput.set(lastSet?.weight ?? log.targetWeight ?? 0);
+      this.repsInput.set(lastSet?.reps ?? log.targetReps ?? 10);
     }
   }
 
@@ -98,35 +95,30 @@ export class SessionActiveComponent implements OnDestroy {
   }
 
   async logSet(): Promise<void> {
-    const s = this.session();
-    const ex = this.currentExercise();
-    if (!s || !ex) return;
+    const log = this.currentLog();
+    if (!log) return;
 
     const setRecord: SetRecord = {
-      setNumber: ex.sets.length + 1,
+      setNumber: log.sets.length + 1,
       weight: this.weightInput(),
       reps: this.repsInput(),
       completedAt: new Date().toISOString()
     };
 
-    await this.sessionService.logSet(s.id, this.currentExerciseIndex(), setRecord);
+    await this.exerciseLogService.logSet(log.id, setRecord);
 
-    if (ex.restTime && ex.sets.length + 1 < ex.targetSets) {
-      this.startRestTimer(ex.restTime);
+    if (log.restTime && log.sets.length + 1 < log.targetSets) {
+      this.startRestTimer(log.restTime);
     }
   }
 
-  async completeSession(): Promise<void> {
-    const s = this.session();
-    if (!s || !this.hasLoggedAnySet()) return;
+  async completeTraining(): Promise<void> {
+    const w = this.workout();
+    if (!w || !this.hasLoggedAnySet()) return;
     this.completing.set(true);
-    await this.sessionService.completeSession(s.id);
-    if (s.workoutId) {
-      await this.workoutService.markComplete(s.workoutId);
-      this.router.navigate(['/workouts', s.workoutId]);
-    } else {
-      this.router.navigate(['/session/history']);
-    }
+    await this.exerciseLogService.completeWorkoutLogs(w.id);
+    await this.workoutService.markComplete(w.id);
+    this.router.navigate(['/workouts', w.id]);
   }
 
   formatTime(seconds: number): string {
@@ -170,9 +162,9 @@ export class SessionActiveComponent implements OnDestroy {
 
   private startElapsedTimer(): void {
     this.elapsedInterval = setInterval(() => {
-      const s = this.session();
-      if (s && !s.completedAt) {
-        const started = new Date(s.startedAt).getTime();
+      const startedAt = this.logs()[0]?.startedAt;
+      if (startedAt) {
+        const started = new Date(startedAt).getTime();
         this.elapsedSeconds.set(Math.round((Date.now() - started) / 1000));
       }
     }, 1000);

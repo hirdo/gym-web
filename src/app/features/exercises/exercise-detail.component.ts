@@ -1,7 +1,7 @@
 import { Component, inject, computed } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ExerciseLibraryService } from '../../core/services/exercise-library.service';
-import { WorkoutSessionService } from '../../core/services/workout-session.service';
+import { ExerciseLogService } from '../../core/services/exercise-log.service';
 import { AuthService } from '../../core/services/auth.service';
 import { parseLocalDate } from '../../core/utils/date.util';
 
@@ -16,7 +16,7 @@ export class ExerciseDetailComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly exerciseService = inject(ExerciseLibraryService);
-  private readonly sessionService = inject(WorkoutSessionService);
+  private readonly exerciseLogService = inject(ExerciseLogService);
   readonly auth = inject(AuthService);
 
   readonly exercise = computed(() => {
@@ -27,7 +27,7 @@ export class ExerciseDetailComponent {
   readonly history = computed(() => {
     const ex = this.exercise();
     if (!ex) return [];
-    return this.sessionService.getExerciseHistory(ex.name).slice(0, 10);
+    return this.exerciseLogService.getExerciseHistory(ex.name, ex.id).slice(0, 10);
   });
 
   readonly alternatives = computed(() => {
@@ -39,7 +39,7 @@ export class ExerciseDetailComponent {
   readonly lastWeight = computed(() => {
     const ex = this.exercise();
     if (!ex) return undefined;
-    return this.sessionService.getLastWeight(ex.name);
+    return this.exerciseLogService.getLastWeight(ex.name, ex.id);
   });
 
   formatDate(dateStr: string): string {

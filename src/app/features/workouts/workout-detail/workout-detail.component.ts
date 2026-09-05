@@ -1,7 +1,7 @@
 import { Component, inject, computed } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { WorkoutService } from '../../../core/services/workout.service';
-import { WorkoutSessionService } from '../../../core/services/workout-session.service';
+import { ExerciseLogService } from '../../../core/services/exercise-log.service';
 
 @Component({
   selector: 'app-workout-detail',
@@ -14,23 +14,23 @@ export class WorkoutDetailComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly workoutService = inject(WorkoutService);
-  private readonly sessionService = inject(WorkoutSessionService);
+  private readonly exerciseLogService = inject(ExerciseLogService);
 
   readonly workout = computed(() => {
     const id = this.route.snapshot.paramMap.get('id');
     return id ? this.workoutService.getById(id) : undefined;
   });
 
-  readonly relatedSessions = computed(() => {
+  readonly hasBeenTrained = computed(() => {
     const w = this.workout();
-    return w ? this.sessionService.getSessionsForWorkout(w.id) : [];
+    return w ? this.exerciseLogService.logsForWorkout(w.id).length > 0 : false;
   });
 
-  async startSession(): Promise<void> {
+  async startTraining(): Promise<void> {
     const w = this.workout();
     if (w) {
-      const session = await this.sessionService.startSession(w.id);
-      this.router.navigate(['/session', session.id]);
+      await this.exerciseLogService.startWorkoutLogs(w);
+      this.router.navigate(['/workouts', w.id, 'train']);
     }
   }
 
@@ -44,7 +44,7 @@ export class WorkoutDetailComponent {
   async deleteWorkout(): Promise<void> {
     const w = this.workout();
     if (w) {
-      await this.sessionService.deleteSessionsForWorkout(w.id);
+      await this.exerciseLogService.deleteLogsForWorkout(w.id);
       await this.workoutService.delete(w.id);
       this.router.navigate(['/workouts']);
     }

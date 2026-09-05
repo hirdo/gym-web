@@ -2,7 +2,6 @@ import { Component, inject, computed, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ProgramService } from '../../core/services/program.service';
-import { WorkoutSessionService } from '../../core/services/workout-session.service';
 import { WorkoutService } from '../../core/services/workout.service';
 import { ExerciseLibraryService } from '../../core/services/exercise-library.service';
 import { AuthService } from '../../core/services/auth.service';
@@ -19,7 +18,6 @@ export class ProgramDetailComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly programService = inject(ProgramService);
-  private readonly sessionService = inject(WorkoutSessionService);
   private readonly workoutService = inject(WorkoutService);
   private readonly exerciseService = inject(ExerciseLibraryService);
   readonly auth = inject(AuthService);
@@ -80,17 +78,6 @@ export class ProgramDetailComponent {
 
   getExerciseImage(exerciseId: string): string | undefined {
     return this.exerciseService.getById(exerciseId)?.imageUrl;
-  }
-
-  async startDay(): Promise<void> {
-    const p = this.program();
-    if (!p) return;
-    const dayIndex = p.currentDay || 0;
-    const day = p.days[dayIndex];
-    if (!day) return;
-
-    const session = await this.sessionService.startSession(undefined, p.id, day.dayNumber);
-    this.router.navigate(['/session', session.id]);
   }
 
   async deleteProgram(): Promise<void> {

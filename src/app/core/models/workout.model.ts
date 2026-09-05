@@ -8,6 +8,7 @@ export interface Exercise {
   restTime?: number;
   notes?: string;
   imageUrl?: string;
+  templateId?: string;
 }
 
 export interface Workout {
@@ -61,28 +62,21 @@ export interface SetRecord {
   isWarmup?: boolean;
 }
 
-export interface ExerciseSession {
-  exerciseId: string;
+export interface ExerciseLog {
+  id: string;
+  userId: string;
+  workoutId: string;
+  exerciseIndex: number;
+  exerciseTemplateId?: string;
   exerciseName: string;
+  date: string;
   targetSets: number;
   targetReps: number;
   targetWeight?: number;
   restTime?: number;
   sets: SetRecord[];
-}
-
-export interface WorkoutSession {
-  id: string;
-  userId: string;
-  workoutId?: string;
-  programId?: string;
-  dayNumber?: number;
-  name: string;
   startedAt: string;
   completedAt?: string;
-  durationSeconds?: number;
-  exercises: ExerciseSession[];
-  notes?: string;
   createdAt: string;
   updatedAt: string;
 }

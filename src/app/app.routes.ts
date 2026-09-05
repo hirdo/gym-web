@@ -43,6 +43,13 @@ export const routes: Routes = [
           )
       },
       {
+        path: ':id/train',
+        loadComponent: () =>
+          import('./features/workouts/workout-train/workout-train.component').then(
+            (m) => m.WorkoutTrainComponent
+          )
+      },
+      {
         path: ':id',
         loadComponent: () =>
           import('./features/workouts/workout-detail/workout-detail.component').then(
@@ -119,26 +126,6 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/programs/program-detail.component').then(
             (m) => m.ProgramDetailComponent
-          )
-      }
-    ]
-  },
-  {
-    path: 'session',
-    canActivate: [canActivateAuth],
-    children: [
-      {
-        path: 'history',
-        loadComponent: () =>
-          import('./features/session/session-history.component').then(
-            (m) => m.SessionHistoryComponent
-          )
-      },
-      {
-        path: ':id',
-        loadComponent: () =>
-          import('./features/session/session-active.component').then(
-            (m) => m.SessionActiveComponent
           )
       }
     ]
